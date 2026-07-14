@@ -378,14 +378,19 @@
   <section id="secGal">
     <div class="card">
       <b>📸 記念館</b>
-      <p class="note">3D鑑賞室の「📸記念撮影」で撮った一枚をここに飾れます。友達と見せ合おう。</p>
+      <p class="note">3D鑑賞室の「📸記念撮影」で撮った一枚をここに飾れます。飾った写真は自動で仲間の画面にも並びます(送信不要)。</p>
       <div class="zukan" id="galGrid" style="grid-template-columns:1fr 1fr;"></div>
       <div class="empty" id="galEmpty">まだ記念写真がありません。3D鑑賞室で撮ってみよう。</div>
+      <div id="frdGalWrap" style="display:none;margin-top:14px;">
+        <b>🌏 みんなの記念館</b>
+        <p class="note" style="margin-bottom:8px;">仲間が飾った写真は自動でここに並びます。</p>
+        <div id="frdGalList"></div>
+      </div>
     </div>
   </section>
 
   <footer>
-    ◆ うんちバトラー v15 ◆<br>
+    ◆ うんちバトラー v16 ◆<br>
     ◆ うんちバトラーは娯楽アプリです ◆<br>
     ただし黒色・赤色・白色の便が続く場合は、冗談抜きで消化器内科の受診をおすすめします。
   </footer>
@@ -1212,8 +1217,9 @@
     cam3d.lookAt(tx,ty,tz);
   }
   function clampCam(){
-    camState.phi=Math.max(0.25,Math.min(1.6,camState.phi));
-    camState.radius=Math.max(2.4,Math.min(15,camState.radius));
+    // 画角・ズームは自由(真上・真下アングルも超接写も引きもOK)
+    camState.phi=Math.max(0.05,Math.min(3.09,camState.phi));
+    camState.radius=Math.max(0.9,Math.min(40,camState.radius));
   }
   let ctrlAttached=false;
   function attachControls(dom){
@@ -1530,9 +1536,10 @@
   $('snapGallery').onclick=()=>{
     if(!lastSnap)return;
     db.gallery.unshift({img:lastSnap,ts:Date.now(),stamp:Math.floor(Math.random()*STAMPS.length)});
-    try{save();toast('🏛️ 記念館に飾りました!');}
+    try{save();toast('🏛️ 記念館に飾りました!仲間にも自動で共有されます');}
     catch(err){db.gallery.shift();toast('保存容量オーバー。古い写真を消してね');}
     renderGallery();
+    if(typeof scheduleSync==='function')scheduleSync(); // 飾ったら自動で共有
   };
   if(navigator.share){
     $('snapShare').style.display='block';
@@ -1598,10 +1605,31 @@
         +'<div style="font-size:.66rem;color:var(--dim);margin-top:3px;">'+new Date(it.ts).toLocaleDateString('ja-JP')+'</div>';
       if(!had)assigned=true;
       const del=document.createElement('button');del.className='mini warn';del.textContent='🗑';del.style.marginTop='4px';
-      del.onclick=()=>{if(!confirm('この記念写真を削除しますか?'))return;db.gallery.splice(i,1);save();renderGallery();};
+      del.onclick=()=>{if(!confirm('この記念写真を削除しますか?'))return;db.gallery.splice(i,1);save();renderGallery();if(typeof scheduleSync==='function')scheduleSync();};
       d.appendChild(del);g.appendChild(d);
     });
     if(assigned)save(); // 既存写真にもスタンプを割り当てて固定
+    // みんなの記念館(仲間の写真・自動同期)
+    const wrap=$('frdGalWrap'),list=$('frdGalList');
+    const withG=db.friends.filter(f=>Array.isArray(f.gallery)&&f.gallery.length);
+    if(withG.length){
+      wrap.style.display='block';list.innerHTML='';
+      withG.forEach(f=>{
+        const box=document.createElement('div');
+        box.innerHTML='<div style="font-weight:700;color:var(--navy);margin:10px 0 6px;">📸 '+esc(f.name)+' の記念館</div>';
+        const grid=document.createElement('div');grid.className='zukan';
+        f.gallery.forEach((it,i)=>{
+          const src=String(it&&it.img||'');
+          if(!/^data:image\//.test(src))return; // 画像データ以外は表示しない
+          const d=document.createElement('div');d.className='zitem';d.style.padding='6px';
+          d.innerHTML='<span class="stampwrap"><img src="'+src+'" style="width:100%;border-radius:6px;display:block;">'
+            +stampHtml(it,i)+'</span>'
+            +'<div style="font-size:.66rem;color:var(--dim);margin-top:3px;">'+new Date(it.ts||0).toLocaleDateString('ja-JP')+'</div>';
+          grid.appendChild(d);
+        });
+        box.appendChild(grid);list.appendChild(box);
+      });
+    }else wrap.style.display='none';
   }
   $('saveBtn').onclick=()=>{
     const date=$('fDate').value;
@@ -1848,6 +1876,43 @@
   function slimEntries(list){
     return list.slice(-60).map(e=>{const c={};for(const k in e)if(k!=='photo')c[k]=e[k];return c;});
   }
+  // 記念写真を共有用に縮小(1枚あたり約30KB・最新6枚)
+  function shrinkImg(dataUrl,maxW,q){
+    return new Promise(resolve=>{
+      let settled=false;
+      const done=v=>{if(settled)return;settled=true;clearTimeout(tm);resolve(v);};
+      const tm=setTimeout(()=>done(null),3000); // 画像が読めなくても同期を止めない
+      try{
+        const im=new Image();
+        im.onload=()=>{
+          try{
+            const sc=Math.min(1,maxW/im.width);
+            const cv=document.createElement('canvas');
+            cv.width=Math.max(1,Math.round(im.width*sc));
+            cv.height=Math.max(1,Math.round(im.height*sc));
+            cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+            done(cv.toDataURL('image/jpeg',q));
+          }catch(e){done(null);}
+        };
+        im.onerror=()=>done(null);
+        im.src=dataUrl;
+      }catch(e){done(null);}
+    });
+  }
+  async function buildShareGallery(){
+    const items=db.gallery.slice(0,6);
+    const out=[];let made=false;
+    for(const it of items){
+      if(!it.sm){
+        const sm=await shrinkImg(it.img,400,0.5);
+        if(sm){it.sm=sm;made=true;}
+      }
+      const img=it.sm||(typeof it.img==='string'&&it.img.length<150000?it.img:null);
+      if(img)out.push({img:img,ts:it.ts,stamp:it.stamp});
+    }
+    if(made)save();
+    return out;
+  }
   async function syncNow(){
     if(!isHosted||syncBusy)return;
     syncBusy=true;
@@ -1869,17 +1934,18 @@
         let f=db.friends.find(x=>x.uid===uid);
         if(!f)f=db.friends.find(x=>!x.uid&&x.name===nm);
         if(f){f.name=nm;f.uid=uid;f.entries=u.entries;}
-        else db.friends.push({name:nm,uid:uid,entries:u.entries});
+        else{f={name:nm,uid:uid,entries:u.entries};db.friends.push(f);}
+        f.gallery=Array.isArray(u.gallery)?u.gallery:[];
       }
       save();
-      // 自分の記録をアップ(写真は除外・直近60件)
-      if(db.entries.length){
-        room.users[db.uid]={name:myName(),entries:slimEntries(db.entries),up:Date.now()};
+      // 自分の記録と記念写真をアップ(縮小版)
+      if(db.entries.length||db.gallery.length){
+        room.users[db.uid]={name:myName(),entries:slimEntries(db.entries),gallery:await buildShareGallery(),up:Date.now()};
         await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(room)});
       }
       const others=Object.keys(room.users).filter(u=>u!==db.uid).length;
       if(st)st.textContent='🌐 '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+' に同期済み(仲間 '+others+'人)';
-      renderHyo();
+      renderHyo();renderGallery();
     }catch(err){
       if(st)st.textContent='⚠️ 同期できませんでした(通信環境を確認してね)';
     }
