@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>うんちバトラー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Oswald:wght@500;600&family=Yuji+Syuku&family=Dela+Gothic+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e5; --panel:#fffdf6; --navy:#1e2a44; --navy2:#2c3d63;
+    --gold:#b08d2e; --gold-l:#d4b054; --ink:#2b2620; --dim:#7d745f;
+    --red:#a63a2e; --green:#4e7a4e; --line:#d9cdae;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  button{touch-action:manipulation;} /* iOSのダブルタップズーム判定でタップが食われるのを防ぐ */
+  body{
+    margin:0;color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Sans",system-ui,sans-serif;
+    font-weight:500;-webkit-font-smoothing:antialiased;font-feature-settings:"palt";
+    background:
+      radial-gradient(ellipse at 50% -5%, rgba(176,141,46,.14) 0%, transparent 55%),
+      repeating-linear-gradient(0deg, transparent 0 40px, rgba(176,141,46,.05) 40px 41px),
+      var(--paper);
+    background-attachment:fixed;min-height:100vh;
+  }
+  .serif{font-family:"Shippori Mincho B1",serif;}
+  .wrap{max-width:560px;margin:0 auto;padding:14px 12px 90px;}
+  header{text-align:center;margin-bottom:6px;}
+  .crest{font-size:1rem;letter-spacing:.6em;color:var(--gold);}
+  h1{
+    font-family:"Shippori Mincho B1",serif;font-weight:800;
+    font-size:1.65rem;margin:2px 0;letter-spacing:.2em;color:var(--navy);
+  }
+  .sub{font-family:"Oswald",sans-serif;font-size:.64rem;color:var(--dim);letter-spacing:.45em;}
+  .namebar{font-size:.8rem;color:var(--dim);margin-top:6px;}
+  #userName{
+    border:none;border-bottom:1px solid var(--gold);background:transparent;
+    font:inherit;color:var(--navy);text-align:center;width:7em;font-size:.95rem;font-weight:700;
+  }
+  nav{display:flex;gap:4px;margin:14px 0 12px;}
+  nav button{
+    flex:1;padding:10px 2px;border:1px solid var(--navy);border-radius:6px;
+    background:var(--panel);color:var(--navy);
+    font:inherit;font-weight:700;cursor:pointer;font-size:.68rem;letter-spacing:0;
+  }
+  nav button.on{background:var(--navy);color:#f3e9c8;box-shadow:0 2px 8px rgba(30,42,68,.35);}
+  section{display:none;}
+  section.on{display:block;}
+  .card{
+    background:var(--panel);border:1px solid var(--navy);border-radius:8px;
+    padding:14px;margin-bottom:14px;position:relative;
+    box-shadow:0 2px 10px rgba(43,38,32,.12);
+  }
+  .card::before{
+    content:'';position:absolute;inset:4px;border:1px solid var(--line);border-radius:5px;pointer-events:none;
+  }
+  .card>*{position:relative;}
+  .card b{color:var(--navy);}
+  label.fl{display:block;font-weight:700;font-size:.83rem;margin:13px 0 6px;color:var(--navy);}
+  label.fl:first-child{margin-top:0;}
+  input[type=date],input[type=time],input[type=text],textarea{
+    width:100%;padding:9px;border:1px solid var(--dim);border-radius:6px;
+    font:inherit;background:#fff;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:52px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chips button{
+    padding:8px 12px;border:1px solid var(--dim);border-radius:6px;
+    background:#fff;color:var(--ink);font:inherit;font-size:.83rem;cursor:pointer;
+  }
+  .chips button.on{
+    background:var(--navy);border-color:var(--gold);color:#f3e9c8;font-weight:700;
+    box-shadow:0 0 0 2px rgba(176,141,46,.35);
+  }
+  .chips.colorchips button{padding-left:28px;position:relative;}
+  .chips.colorchips button i{
+    position:absolute;left:8px;top:50%;transform:translateY(-50%);
+    width:13px;height:13px;border-radius:50%;border:1px solid rgba(0,0,0,.25);
+  }
+  .bristol{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .bristol button{
+    text-align:left;padding:8px 10px;border:1px solid var(--dim);border-radius:6px;
+    background:#fff;font:inherit;font-size:.8rem;cursor:pointer;color:var(--ink);
+  }
+  .bristol button.on{
+    background:var(--navy);color:#f3e9c8;border-color:var(--gold);font-weight:700;
+    box-shadow:0 0 0 2px rgba(176,141,46,.35);
+  }
+  .bristol .bnum{font-family:"Oswald",sans-serif;font-size:.7rem;opacity:.65;margin-right:4px;}
+  .bigbtn{
+    width:100%;padding:15px;font-family:"Shippori Mincho B1",serif;font-weight:800;
+    font-size:1.1rem;letter-spacing:.25em;
+    background:linear-gradient(180deg,var(--navy2),var(--navy));color:#f3e9c8;
+    border:1px solid var(--gold);border-radius:8px;cursor:pointer;
+    box-shadow:0 4px 0 #101827;margin-top:16px;
+  }
+  .bigbtn:active{transform:translateY(3px);box-shadow:none;}
+  .ghost{
+    width:100%;padding:10px;font:inherit;font-size:.84rem;font-weight:700;
+    background:transparent;border:1px dashed var(--gold);border-radius:6px;
+    color:var(--navy);cursor:pointer;margin-bottom:8px;
+  }
+  .mini{
+    border:1px solid var(--navy);background:#fff;border-radius:6px;
+    padding:6px 10px;font:inherit;font-size:.78rem;cursor:pointer;color:var(--navy);font-weight:700;
+  }
+  .mini.warn{border-color:var(--red);color:var(--red);}
+  .note{font-size:.76rem;color:var(--dim);margin:6px 0 10px;line-height:1.7;}
+  .empty{text-align:center;opacity:.55;padding:16px 0;font-size:.84rem;}
+  /* 鑑定モーダル */
+  #modal,#modal3d{
+    position:fixed;inset:0;background:rgba(20,17,12,.75);display:none;
+    align-items:center;justify-content:center;z-index:20;padding:16px;
+  }
+  #modal3d{z-index:25;}
+  #modal.show,#modal3d.show{display:flex;}
+  .cert{
+    background:var(--panel);border:2px solid var(--gold);border-radius:10px;
+    max-width:400px;width:100%;padding:22px 18px;text-align:center;position:relative;
+    box-shadow:0 10px 40px rgba(0,0,0,.5);
+    max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch; /* スマホで中身が長くてもスクロールでボタンに届く */
+  }
+  .xclose{
+    position:absolute;top:10px;right:10px;z-index:3;
+    width:46px;height:46px;border-radius:999px;
+    background:rgba(20,17,12,.72);color:#fff;border:2px solid #fff;
+    font-size:1.25rem;font-weight:700;cursor:pointer;line-height:1;
+  }
+  .cert::before{content:'';position:absolute;inset:6px;border:1px solid var(--line);border-radius:6px;pointer-events:none;}
+  .cert .ctitle{font-family:"Shippori Mincho B1",serif;font-weight:800;letter-spacing:.4em;color:var(--navy);font-size:.95rem;}
+  .cert .cvalue{
+    font-family:"Oswald",sans-serif;font-weight:600;font-size:2.6rem;color:var(--red);
+    margin:10px 0 2px;font-variant-numeric:tabular-nums;
+  }
+  .cert .crank{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:1.1rem;color:var(--gold);letter-spacing:.2em;}
+  .cert .ccomment{font-size:.85rem;margin:10px 0;line-height:1.8;}
+  .cert .cmeihin{
+    margin:10px 0;padding:8px;border:1px dashed var(--gold);border-radius:6px;
+    background:rgba(212,176,84,.12);font-size:.85rem;font-weight:700;color:var(--navy);
+  }
+  .cert .chealth{font-size:.75rem;color:var(--red);margin:8px 0;line-height:1.6;}
+  .cert button{
+    margin-top:8px;padding:10px 26px;font:inherit;font-weight:700;
+    background:var(--navy);color:#f3e9c8;border:1px solid var(--gold);border-radius:6px;cursor:pointer;
+  }
+  /* 図鑑 */
+  .zukan{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .zitem{
+    border:1px solid var(--navy);border-radius:8px;background:#fff;
+    padding:10px;text-align:center;
+  }
+  .zitem.lock{opacity:.55;background:#eee7d6;border-style:dashed;}
+  .zitem .zi{font-size:1.5rem;}
+  .zitem .zn{font-family:"Shippori Mincho B1",serif;font-weight:700;font-size:.82rem;color:var(--navy);margin:3px 0;}
+  .zitem .zc{font-size:.68rem;color:var(--dim);line-height:1.5;}
+  .zcount{font-family:"Oswald",sans-serif;font-size:.8rem;color:var(--gold);letter-spacing:.1em;}
+  /* 品評会 */
+  .fcard{
+    border:1px solid var(--navy);border-radius:8px;background:#fff;
+    padding:11px 12px;margin-bottom:10px;
+  }
+  .fcard .fname{font-weight:700;font-size:.95rem;color:var(--navy);}
+  .fcard .fstats{font-size:.76rem;margin:4px 0 8px;color:var(--dim);line-height:1.8;}
+  .fcard .fstats b{color:var(--ink);}
+  .podium{
+    border:2px solid var(--gold);border-radius:10px;padding:14px;margin-bottom:14px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(212,176,84,.22) 0%, transparent 70%),
+      var(--panel);
+  }
+  .podium h3{
+    font-family:"Shippori Mincho B1",serif;font-weight:800;letter-spacing:.3em;
+    text-align:center;margin:0 0 10px;color:var(--navy);font-size:1rem;
+  }
+  .prow{
+    display:flex;align-items:center;gap:8px;padding:8px 4px;
+    border-bottom:1px dashed var(--line);font-size:.85rem;
+  }
+  .prow:last-child{border-bottom:none;}
+  .prow .pm{font-size:1.2rem;width:1.6em;text-align:center;}
+  .prow .pv{margin-left:auto;font-family:"Oswald",sans-serif;font-weight:600;color:var(--red);font-variant-numeric:tabular-nums;}
+  .prow .pn{font-weight:700;color:var(--navy);}
+  .prow .pd{font-size:.7rem;color:var(--dim);}
+  #codeArea{font-size:.7rem;height:70px;word-break:break-all;}
+  /* 資産 */
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .stat{
+    background:var(--panel);border:1px solid var(--navy);border-radius:8px;
+    text-align:center;padding:12px 6px;
+  }
+  .stat .v{font-family:"Oswald",sans-serif;font-size:1.45rem;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;}
+  .stat .v.money{color:var(--red);}
+  .stat .l{font-size:.7rem;margin-top:2px;color:var(--dim);}
+  .bbar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.75rem;}
+  .bbar .bn{width:7.5em;color:var(--dim);}
+  .bbar .bt{flex:1;height:12px;background:#eee7d6;border-radius:999px;overflow:hidden;}
+  .bbar .bt i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-l),var(--gold));}
+  .bbar .bc{width:2em;text-align:right;font-family:"Oswald",sans-serif;}
+  .best{
+    text-align:center;border:2px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:14px;
+    background:radial-gradient(ellipse at 50% 0%, rgba(212,176,84,.2) 0%, transparent 70%),var(--panel);
+  }
+  .best .bt1{font-size:.72rem;color:var(--dim);letter-spacing:.2em;}
+  .best .bt2{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:1.15rem;color:var(--navy);margin:3px 0;}
+  .best .bt3{font-family:"Oswald",sans-serif;font-weight:600;font-size:1.5rem;color:var(--red);}
+  .entry{border-bottom:1px dashed var(--line);padding:9px 0;font-size:.8rem;}
+  .entry:last-child{border-bottom:none;}
+  .entry .del{
+    float:right;border:1px solid var(--red);color:var(--red);background:#fff;
+    border-radius:6px;font-size:.7rem;padding:3px 8px;cursor:pointer;
+  }
+  .tag{
+    display:inline-block;background:rgba(176,141,46,.12);border:1px solid var(--line);
+    border-radius:5px;padding:1px 7px;margin:1px 2px 1px 0;font-size:.73rem;
+  }
+  .money{font-family:"Oswald",sans-serif;font-variant-numeric:tabular-nums;}
+  .photothumb{border:1px solid var(--gold);border-radius:6px;max-width:120px;max-height:120px;vertical-align:middle;}
+  /* 記念館スタンプ(熱盛スタイル) */
+  .stampwrap{position:relative;display:block;}
+  .stampov{
+    position:absolute;right:5%;bottom:7%;
+    color:#fff;text-align:center;line-height:1.02;
+    font-family:"Dela Gothic One","Shippori Mincho B1",sans-serif;
+    padding:5px 9px 3px;border-radius:9px;
+    border:3px solid #fff;
+    pointer-events:none;max-width:86%;
+    text-shadow:1px 2px 0 rgba(0,0,0,.25);
+  }
+  .stampov .sm{display:block;white-space:nowrap;letter-spacing:.01em;}
+  .stampov .sr{display:block;font-size:.5rem;letter-spacing:.32em;opacity:.92;margin-top:1px;}
+  .photothumb.sm{max-width:56px;max-height:56px;border-radius:5px;margin-right:6px;}
+  footer{text-align:center;font-size:.68rem;color:var(--dim);margin-top:24px;line-height:1.8;}
+  #toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+    background:var(--navy);color:#f3e9c8;padding:10px 20px;border-radius:999px;
+    font-size:.85rem;font-weight:700;opacity:0;transition:opacity .3s;pointer-events:none;z-index:30;
+    box-shadow:0 4px 14px rgba(0,0,0,.4);max-width:88vw;
+  }
+  #toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="crest">◆ ◆ ◆</div>
+    <h1>うんちバトラー</h1>
+    <div class="sub">UNCHI BATTLER — APPRAISAL EDITION</div>
+    <div class="namebar">鑑定士: <input id="userName" placeholder="なまえ"></div>
+  </header>
+
+  <nav>
+    <button id="tabRec" class="on">🔎 鑑定</button>
+    <button id="tabZkn">📜 図鑑</button>
+    <button id="tabHyo">🏵️ 品評会</button>
+    <button id="tabSta">💰 資産</button>
+    <button id="tabGal">📸 記念館</button>
+  </nav>
+
+  <!-- 鑑定(記録) -->
+  <section id="secRec" class="on">
+    <div class="card">
+      <div class="row" style="display:flex;gap:10px;">
+        <div style="flex:1;"><label class="fl">📆 日付</label><input type="date" id="fDate"></div>
+        <div style="flex:1;"><label class="fl">🕐 時刻</label><input type="time" id="fTime"></div>
+      </div>
+
+      <label class="fl">📷 写真から鑑定(任意・撮ると色を自動判定します)</label>
+      <input type="file" id="fPhoto" accept="image/*" capture="environment" style="display:none;">
+      <button class="ghost" id="photoBtn" style="margin-bottom:6px;">📸 写真を撮る / 選ぶ</button>
+      <div id="photoPrev" style="text-align:center;"></div>
+
+      <label class="fl">🎨 色味<span style="font-weight:400;font-size:.72rem;color:var(--dim);"> (写真から自動選択されます)</span></label>
+      <div class="chips colorchips" id="cColor"></div>
+
+      <label class="fl">🍌 質感・形状(ブリストルスケール)</label>
+      <div class="bristol" id="cBristol"></div>
+      <p class="note" style="margin-bottom:0;">※ブリストルスケールは実在する医学的な便の分類です。4番が理想とされる。</p>
+
+      <label class="fl">📏 デカさ</label>
+      <div class="chips" id="cSize"></div>
+
+      <label class="fl">🥄 量</label>
+      <div class="chips" id="cAmt"></div>
+
+      <label class="fl">🧻 キレ</label>
+      <div class="chips" id="cKire"></div>
+
+      <label class="fl">📝 メモ(任意)</label>
+      <textarea id="fMemo" placeholder="昨日食べたもの、体調など"></textarea>
+
+      <button class="bigbtn" id="saveBtn">本日の逸品を鑑定に出す</button>
+    </div>
+    <div class="card">
+      <b>📖 最近の鑑定履歴</b>
+      <div id="recentList"></div>
+      <div class="empty" id="recentEmpty">まだ鑑定品がありません</div>
+    </div>
+  </section>
+
+  <!-- 図鑑 -->
+  <section id="secZkn">
+    <div class="card">
+      <b>📜 銘品図鑑</b> <span class="zcount" id="zkanCount"></span>
+      <p class="note">特定の条件を満たす逸品を出すと銘品として登録されます。全制覇を目指せ。</p>
+      <div class="zukan" id="zukanGrid"></div>
+    </div>
+  </section>
+
+  <!-- 品評会 -->
+  <section id="secHyo">
+    <div class="card">
+      <b>📤 じぶんの出品コード</b>
+      <p class="note">コピーしてLINEで送るだけ。友達はここに貼れば品評会に出品されます。</p>
+      <button class="ghost" id="myLinkBtn" style="display:none;">🔗 出品リンクをコピー(友達はタップするだけ)</button>
+      <button class="ghost" id="myCodeBtn">🏵️ 出品コードをコピー</button>
+      <button class="ghost" id="myShareBtn" style="display:none;">📮 共有シートで直接送る(LINE等)</button>
+      <textarea id="myCodeOut" readonly style="display:none;font-size:.7rem;height:76px;word-break:break-all;margin-bottom:8px;" placeholder=""></textarea>
+      <b>📥 友達の逸品を受け入れる</b>
+      <p class="note" style="margin-bottom:6px;">LINEで届いたコードを<b>長押しコピー</b>したら、下のボタンを押すだけ。貼り付け不要。</p>
+      <button class="ghost" id="clipImportBtn">📥 コピーしたコードをワンタップ取り込み</button>
+      <details style="margin-top:4px;">
+        <summary style="font-size:.76rem;color:var(--dim);cursor:pointer;">うまくいかない時は手動で貼り付け</summary>
+        <textarea id="codeArea" placeholder="友達の出品コードを貼り付け" style="margin-top:6px;"></textarea>
+        <button class="ghost" id="codeAddBtn" style="margin-top:8px;">🏛️ 品評会に出品させる</button>
+      </details>
+    </div>
+
+    <div class="podium" id="weekPodium" style="display:none;">
+      <h3>今週の品評会</h3>
+      <div id="podiumRows"></div>
+      <button class="ghost" id="ceremonyBtn" style="margin-top:10px;">🏆 3D表彰式をはじめる</button>
+      <button class="ghost" id="podiumCopyBtn" style="margin-bottom:0;">📋 結果をコピーして共有</button>
+    </div>
+
+    <div id="frdList"></div>
+    <div class="empty" id="frdEmpty">まだ出品者がいません。孤高の鑑定士…。</div>
+
+    <div class="card" id="assetRankCard" style="display:none;">
+      <b>💰 総資産ランキング(通算査定額)</b>
+      <div id="assetRank"></div>
+    </div>
+  </section>
+
+  <!-- 資産 -->
+  <section id="secSta">
+    <div class="best" id="bestBox" style="display:none;">
+      <div class="bt1">生涯最高額の一品</div>
+      <div class="bt2" id="bestName">-</div>
+      <div class="bt3 money" id="bestVal">-</div>
+      <div style="font-size:.72rem;color:var(--dim);" id="bestDate"></div>
+    </div>
+    <div class="statgrid">
+      <div class="stat"><div class="v money" id="sTotalVal">¥0</div><div class="l">総資産(査定総額)</div></div>
+      <div class="stat"><div class="v money" id="sWeekVal">¥0</div><div class="l">今週の稼ぎ</div></div>
+      <div class="stat"><div class="v" id="sCount">0</div><div class="l">通算鑑定数</div></div>
+      <div class="stat"><div class="v" id="sStreak">0</div><div class="l">連続記録(日)</div></div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <b>🍌 形状の傾向(ブリストル分布)</b>
+      <div id="bristolChart" style="margin-top:8px;"></div>
+      <p class="note" id="healthHint" style="margin-bottom:0;"></p>
+    </div>
+    <div class="card">
+      <b>📣 資産を自慢する</b>
+      <button class="ghost" id="recapBtn" style="margin-top:8px;">📋 自慢用テキストをコピー</button>
+    </div>
+    <div class="card">
+      <b>💾 バックアップ</b>
+      <button class="ghost" id="expBtn" style="margin-top:8px;">⬇️ 全データを書き出す (.json)</button>
+      <button class="ghost" id="impBtn">⬆️ データを復元する</button>
+      <input type="file" id="impFile" accept=".json" style="display:none;">
+    </div>
+  </section>
+
+  <!-- 記念館 -->
+  <section id="secGal">
+    <div class="card">
+      <b>📸 記念館</b>
+      <p class="note">3D鑑賞室の「📸記念撮影」で撮った一枚をここに飾れます。友達と見せ合おう。</p>
+      <div class="zukan" id="galGrid" style="grid-template-columns:1fr 1fr;"></div>
+      <div class="empty" id="galEmpty">まだ記念写真がありません。3D鑑賞室で撮ってみよう。</div>
+    </div>
+  </section>
+
+  <footer>
+    ◆ うんちバトラー v13 ◆<br>
+    ◆ うんちバトラーは娯楽アプリです ◆<br>
+    ただし黒色・赤色・白色の便が続く場合は、冗談抜きで消化器内科の受診をおすすめします。
+  </footer>
+</div>
+
+<div id="modal">
+  <div class="cert">
+    <div class="ctitle">◆ 鑑 定 結 果 ◆</div>
+    <div class="cvalue money" id="mValue">¥0</div>
+    <div class="crank" id="mRank"></div>
+    <div class="ccomment" id="mComment"></div>
+    <div class="ccomment" id="mSml" style="text-align:left;font-size:.78rem;border-top:1px dashed var(--line);padding-top:8px;"></div>
+    <div class="cmeihin" id="mMeihin" style="display:none;"></div>
+    <div class="chealth" id="mHealth" style="display:none;"></div>
+    <button id="mView3d" style="margin-right:6px;">🧊 3Dで鑑賞</button>
+    <button id="mClose">受け取る</button>
+  </div>
+</div>
+
+<div id="modal3d">
+  <button id="p3dX" class="xclose" aria-label="閉じる">✕</button>
+  <div class="cert" style="max-width:430px;">
+    <div class="ctitle">◆ 3 D 鑑 賞 室 ◆</div>
+    <div id="p3dOwner" style="font-size:.78rem;color:var(--dim);margin-top:4px;"></div>
+    <div id="p3dWrap" style="width:100%;height:300px;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:#171310;overflow:hidden;touch-action:none;position:relative;">
+      <div id="bgName" style="position:absolute;left:6px;top:6px;font-size:.66rem;color:#fff;background:rgba(0,0,0,.4);padding:2px 8px;border-radius:5px;pointer-events:none;"></div>
+    </div>
+    <div style="font-size:.66rem;color:var(--dim);margin-bottom:6px;">🖐️ ドラッグで回転・2本指/ホイールで拡大縮小</div>
+    <div id="p3dCtrl" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:8px;">
+      <button class="mini" id="bgRandom">🎲 背景ランダム</button>
+      <button class="mini" id="bgPick">🖼️ 背景を選ぶ</button>
+      <button class="mini" id="zoomIn">🔍➕</button>
+      <button class="mini" id="zoomOut">🔍➖</button>
+      <button class="mini" id="snapBtn">📸 記念撮影</button>
+    </div>
+    <div id="bgPicker" style="display:none;max-height:150px;overflow-y:auto;border:1px solid var(--line);border-radius:6px;padding:6px;margin-bottom:8px;text-align:left;"></div>
+    <div id="p3dTabs" style="display:none;gap:6px;justify-content:center;margin-bottom:8px;flex-wrap:wrap;"></div>
+    <div id="p3dSml" style="font-size:.78rem;text-align:left;line-height:1.8;"></div>
+    <button id="p3dClose" style="margin-top:10px;">閉じる</button>
+  </div>
+</div>
+
+<div id="snapModal" style="position:fixed;inset:0;background:rgba(20,17,12,.85);display:none;align-items:center;justify-content:center;z-index:30;padding:16px;">
+  <div class="cert" style="max-width:420px;">
+    <div class="ctitle">◆ 記 念 撮 影 ◆</div>
+    <img id="snapImg" style="width:100%;border:1px solid var(--gold);border-radius:8px;margin:10px 0 6px;">
+    <label class="fl" style="text-align:left;">✍️ 一言添える(達筆で入ります・17文字まで)</label>
+    <input type="text" id="snapText" maxlength="17" placeholder="例: 本日も快腸なり" style="width:100%;padding:9px;border:1px solid var(--dim);border-radius:6px;font-family:'Yuji Syuku',serif;font-size:1rem;margin-bottom:8px;">
+    <button class="ghost" id="snapSave">💾 端末に保存</button>
+    <button class="ghost" id="snapGallery">🏛️ 記念館に飾る</button>
+    <button class="ghost" id="snapShare" style="display:none;">📮 共有する</button>
+    <button id="snapClose" style="margin-top:4px;">閉じる</button>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+(function(){
+  const KEY='unchi_kantei_v1';
+  const COLORS=[
+    {id:'gold',n:'黄金色',c:'#c8a03c',add:300},
+    {id:'brown',n:'茶色',c:'#8a5a2b',add:100},
+    {id:'dark',n:'こげ茶',c:'#4e3517',add:0},
+    {id:'green',n:'緑がかり',c:'#5f6e3a',add:-50},
+    {id:'black',n:'黒っぽい',c:'#26211c',add:-100,warn:'黒色(タール状)が続く場合は上部消化管出血の可能性があります。続くなら本当に病院へ。'},
+    {id:'red',n:'赤みあり',c:'#8e3a2e',add:-100,warn:'赤みが食べ物由来でなく続く場合は血便の可能性があります。続くなら本当に病院へ。'},
+    {id:'white',n:'白っぽい',c:'#cfc7b4',add:-100,warn:'白っぽい便が続く場合は胆道系の不調の可能性があります。続くなら本当に病院へ。'}
+  ];
+  const BRISTOL=[
+    {n:1,label:'コロコロ(うさぎ型)',base:250,tip:'水分と食物繊維が足りてないかも'},
+    {n:2,label:'カチカチ(ソーセージ硬め)',base:450,tip:'便秘気味。水分補給を'},
+    {n:3,label:'表面ひび割れ',base:800,tip:'まずまず良好'},
+    {n:4,label:'バナナ(理想形)',base:1200,tip:'理想的。この調子'},
+    {n:5,label:'やわらか小塊',base:800,tip:'まずまず。やや軟らか'},
+    {n:6,label:'ドロドロ',base:450,tip:'お腹が疲れてるかも。消化にいいものを'},
+    {n:7,label:'シャバシャバ(液状)',base:250,tip:'お大事に。水分補給と休息を'}
+  ];
+  const SIZES=[['おちょぼ',0.7],['ふつう',1.0],['ビッグ',1.6],['伝説級',2.4]];
+  const AMTS=[['少なめ',0.85],['ふつう',1.0],['たっぷり',1.2],['大蔵ざらえ',1.4]];
+  const KIRES=[['神キレ',600],['まずまず',100],['粘り腰',-150]];
+  const MEIHIN=[
+    {id:'excalibur',icon:'⚔️',name:'黄金の聖剣',cond:'形状4×伝説級×神キレ',test:e=>e.bristol===4&&e.size==='伝説級'&&e.kire==='神キレ'},
+    {id:'orochi',icon:'🐍',name:'八岐大蛇',cond:'伝説級×たっぷり以上',test:e=>e.size==='伝説級'&&(e.amt==='たっぷり'||e.amt==='大蔵ざらえ')},
+    {id:'sekitei',icon:'🪨',name:'侘び寂びの石庭',cond:'形状1×おちょぼ',test:e=>e.bristol===1&&e.size==='おちょぼ'},
+    {id:'fuji',icon:'🗻',name:'朝もやの霊峰',cond:'朝5〜9時に形状4',test:e=>{const h=hourOf(e);return h!==null&&h>=5&&h<=9&&e.bristol===4;}},
+    {id:'tetsugaku',icon:'🌙',name:'丑三つ時の来客',cond:'深夜0〜4時の記録',test:e=>{const h=hourOf(e);return h!==null&&h<=4;}},
+    {id:'mikazuki',icon:'🌘',name:'三日月の余韻',cond:'形状3×ふつうサイズ',test:e=>e.bristol===3&&e.size==='ふつう'},
+    {id:'softcream',icon:'🍦',name:'名人の巻き',cond:'形状5×神キレ',test:e=>e.bristol===5&&e.kire==='神キレ'},
+    {id:'gouu',icon:'⛈️',name:'ゲリラ豪雨',cond:'形状7を記録',test:e=>e.bristol===7},
+    {id:'ganseki',icon:'🗿',name:'岩石番長',cond:'形状2×ビッグ以上',test:e=>e.bristol===2&&(e.size==='ビッグ'||e.size==='伝説級')},
+    {id:'kaikin',icon:'📅',name:'快腸の一週間',cond:'7日連続で記録',global:list=>bestStreakOf(list)>=7},
+    {id:'futago',icon:'👯',name:'双子の来訪',cond:'同じ日に2回以上',global:list=>{const c={};for(const e of list){c[e.date]=(c[e.date]||0)+1;if(c[e.date]>=2)return true;}return false;}},
+    {id:'okuman',icon:'👑',name:'肥やしの億万長者',cond:'総査定額100万円突破',global:list=>list.reduce((s,e)=>s+(e.val||0),0)>=1000000}
+  ];
+  const COMMENTS={
+    S:['いい仕事してますねぇ。惚れ惚れする出来です。','これは名家の蔵から出てきた逸品級。','鑑定士人生でもなかなかお目にかかれない一品。','腸内環境、匠の域に達しています。'],
+    A:['堂々たる本物です。良い品ですよ。','丁寧な暮らしぶりがうかがえる好品。','安定した実力を感じます。この調子。'],
+    B:['悪くはないが、本物にはあと一歩。','量産品ですね。日々の精進に期待します。','惜しい。水分と野菜が足りていない気がします。'],
+    C:['残念ながら…お勉強代だと思ってください。','うーん、これは…出直してきなさい。','本日は縁がなかったということで。腸を労って再挑戦を。']
+  };
+
+  let db=load();
+  if(!Array.isArray(db.friends))db.friends=[];
+  if(!Array.isArray(db.gallery))db.gallery=[];
+  const $=id=>document.getElementById(id);
+
+  function load(){
+    try{return JSON.parse(localStorage.getItem(KEY))||{name:'',entries:[],friends:[]};}
+    catch(e){return {name:'',entries:[],friends:[]};}
+  }
+  function save(){localStorage.setItem(KEY,JSON.stringify(db));}
+  function toast(msg){
+    const t=$('toast');t.textContent=msg;t.classList.add('show');
+    clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),2200);
+  }
+  function pad(n){return String(n).padStart(2,'0');}
+  function todayStr(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function nowStr(){const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes());}
+  function myName(){return (db.name||'名無しの鑑定士').trim()||'名無しの鑑定士';}
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function yen(v){return '¥'+Math.round(v).toLocaleString('ja-JP');}
+  function hourOf(e){if(!e.time||!/^\d{1,2}:/.test(e.time))return null;return +e.time.split(':')[0];}
+  function weekStart(){
+    const d=new Date();const day=(d.getDay()+6)%7; // 月曜起点
+    d.setDate(d.getDate()-day);
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  }
+  function inThisWeek(dateStr){return dateStr>=weekStart()&&dateStr<=todayStr();}
+  function bestStreakOf(list){
+    const days=[...new Set(list.map(e=>e.date))].sort();
+    let best=0,cur=0,prev=null;
+    days.forEach(d=>{
+      if(prev)cur=((new Date(d)-new Date(prev))/86400000===1)?cur+1:1;else cur=1;
+      if(cur>best)best=cur;prev=d;
+    });
+    return best;
+  }
+  function curStreakOf(list){
+    const days=new Set(list.map(e=>e.date));
+    if(!days.size)return 0;
+    let streak=0;let d=new Date();
+    if(!days.has(todayStr()))d.setDate(d.getDate()-1);
+    while(true){
+      const ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+      if(days.has(ds)){streak++;d.setDate(d.getDate()-1);}else break;
+    }
+    return streak;
+  }
+  function copyText(text,msg){
+    const done=()=>toast(msg||'コピーしました');
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    }else fallback();
+    function fallback(){
+      const ta=document.createElement('textarea');ta.value=text;
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done();}catch(e){toast('コピーできませんでした');}
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ===== 出品コード ===== */
+  function b64(u8){let s='';for(let i=0;i<u8.length;i++)s+=String.fromCharCode(u8[i]);return btoa(s);}
+  function unb64(s){const bin=atob(s.replace(/\s/g,''));const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);return u8;}
+  async function encodeShare(obj){
+    const bytes=new TextEncoder().encode(JSON.stringify(obj));
+    if(typeof CompressionStream!=='undefined'){
+      const cs=new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate'));
+      return 'UN1.'+b64(new Uint8Array(await new Response(cs).arrayBuffer()));
+    }
+    return 'UN0.'+b64(bytes);
+  }
+  async function decodeShare(code){
+    const m=String(code).match(/UN([01])\.([A-Za-z0-9+/=\s]+)/);
+    if(!m)throw new Error('nocode');
+    const bytes=unb64(m[2]);
+    let buf;
+    if(m[1]==='1'){
+      const ds=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
+      buf=await new Response(ds).arrayBuffer();
+    }else buf=bytes;
+    return JSON.parse(new TextDecoder().decode(buf));
+  }
+
+  /* ===== タブ ===== */
+  const tabs=[['tabRec','secRec'],['tabZkn','secZkn'],['tabHyo','secHyo'],['tabSta','secSta'],['tabGal','secGal']];
+  tabs.forEach(([t,s])=>{
+    $(t).onclick=()=>{
+      tabs.forEach(([t2,s2])=>{
+        $(t2).classList.toggle('on',t2===t);
+        $(s2).classList.toggle('on',s2===s);
+      });
+      if(s==='secZkn')renderZukan();
+      if(s==='secHyo')renderHyo();
+      if(s==='secSta')renderStats();
+      if(s==='secRec')renderRecent();
+      if(s==='secGal')renderGallery();
+    };
+  });
+
+  /* ===== フォーム部品 ===== */
+  let selColor=null,selBristol=null;
+  const colorBox=$('cColor');
+  COLORS.forEach(c=>{
+    const b=document.createElement('button');b.type='button';
+    b.innerHTML='<i style="background:'+c.c+'"></i>'+c.n;
+    b.onclick=()=>{
+      selColor=(selColor===c.id)?null:c.id;
+      [...colorBox.children].forEach((x,i)=>x.classList.toggle('on',COLORS[i].id===selColor));
+    };
+    colorBox.appendChild(b);
+  });
+  const brBox=$('cBristol');
+  BRISTOL.forEach(br=>{
+    const b=document.createElement('button');b.type='button';
+    b.innerHTML='<span class="bnum">'+br.n+'</span>'+br.label;
+    b.onclick=()=>{
+      selBristol=(selBristol===br.n)?null:br.n;
+      [...brBox.children].forEach((x,i)=>x.classList.toggle('on',BRISTOL[i].n===selBristol));
+    };
+    brBox.appendChild(b);
+  });
+  function buildChips(elId,items){
+    const el=$(elId);el.innerHTML='';
+    items.forEach(([v])=>{
+      const b=document.createElement('button');b.type='button';b.textContent=v;
+      b.onclick=()=>{[...el.children].forEach(c=>c.classList.toggle('on',c===b&&!b.classList.contains('on')));};
+      el.appendChild(b);
+    });
+  }
+  function chipVal(elId){const on=$(elId).querySelector('.on');return on?on.textContent:'';}
+  buildChips('cSize',SIZES);buildChips('cAmt',AMTS);buildChips('cKire',KIRES);
+
+  /* ===== 写真処理 ===== */
+  let selPhoto=null,selPhotoColor=null;
+  function hexToRgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+  function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>('0'+Math.round(x).toString(16)).slice(-2)).join('');}
+  function nearestColorId(r,g,b){
+    let best=COLORS[1],bd=1e9;
+    COLORS.forEach(c=>{
+      const [cr,cg,cb]=hexToRgb(c.c);
+      const d=(cr-r)**2+(cg-g)**2+(cb-b)**2;
+      if(d<bd){bd=d;best=c;}
+    });
+    return best.id;
+  }
+  $('photoBtn').onclick=()=>$('fPhoto').click();
+  $('fPhoto').onchange=ev=>{
+    const file=ev.target.files[0];if(!file)return;
+    const img=new Image();
+    img.onload=()=>{
+      // 縮小してdataURL化(共有コードを軽く保つため小さめ)
+      const max=140;let w=img.width,h=img.height;
+      const sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      const cx=cv.getContext('2d');cx.drawImage(img,0,0,w,h);
+      selPhoto=cv.toDataURL('image/jpeg',0.6);
+      // 中央領域の平均色を解析
+      const x0=Math.floor(w*0.3),y0=Math.floor(h*0.3),cw=Math.max(1,Math.floor(w*0.4)),ch=Math.max(1,Math.floor(h*0.4));
+      const data=cx.getImageData(x0,y0,cw,ch).data;
+      let R=0,G=0,B=0,n=0;
+      for(let i=0;i<data.length;i+=4){R+=data[i];G+=data[i+1];B+=data[i+2];n++;}
+      R/=n;G/=n;B/=n;
+      selPhotoColor=rgbToHex(R,G,B);
+      selColor=nearestColorId(R,G,B);
+      [...colorBox.children].forEach((x,i)=>x.classList.toggle('on',COLORS[i].id===selColor));
+      const co=COLORS.find(c=>c.id===selColor);
+      $('photoPrev').innerHTML='<img class="photothumb" src="'+selPhoto+'"><div style="font-size:.74rem;color:var(--dim);margin-top:4px;">色を自動判定: <b style="color:var(--navy)">'+(co?co.n:'')+'</b> <button class="mini" id="photoDel" style="padding:2px 8px;">取消</button></div>';
+      $('photoDel').onclick=()=>{selPhoto=null;selPhotoColor=null;$('photoPrev').innerHTML='';};
+      toast('📸 写真から色を判定しました!');
+    };
+    img.onerror=()=>toast('写真を読み込めませんでした');
+    img.src=URL.createObjectURL(file);
+    ev.target.value='';
+  };
+
+  function resetForm(){
+    $('fDate').value=todayStr();$('fTime').value=nowStr();
+    $('fMemo').value='';
+    selColor=null;selBristol=null;selPhoto=null;selPhotoColor=null;
+    $('photoPrev').innerHTML='';
+    [...colorBox.children].forEach(x=>x.classList.remove('on'));
+    [...brBox.children].forEach(x=>x.classList.remove('on'));
+    ['cSize','cAmt','cKire'].forEach(id=>[...$(id).children].forEach(c=>c.classList.remove('on')));
+  }
+
+  /* ===== 査定 ===== */
+  function appraise(e){
+    const br=BRISTOL.find(b=>b.n===e.bristol);
+    let val=br?br.base:400;
+    const sz=SIZES.find(s=>s[0]===e.size);
+    val*=sz?sz[1]:1;
+    const am=AMTS.find(a=>a[0]===e.amt);
+    val*=am?am[1]:1;
+    const ki=KIRES.find(k=>k[0]===e.kire);
+    val+=ki?ki[1]:0;
+    const co=COLORS.find(c=>c.id===e.color);
+    val+=co?co.add:0;
+    // 本日の相場(揺らぎ)
+    let mult=0.9+Math.random()*0.5;
+    if(Math.random()<0.06)mult*=3; // 鑑定士が思わず唸る日
+    val=Math.max(80,Math.round(val*mult/10)*10);
+    return val;
+  }
+  function rankOf(v){return v>=5000?'S':v>=2500?'A':v>=1000?'B':'C';}
+  function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+  /* ===== うんちソムリエ ===== */
+  function sommelier(e){
+    const art={
+      1:['点描画のような構成、余白の美を感じます','枯山水を思わせる静謐な配置です'],
+      2:['無骨ながら力強いマチエール','岩肌のような重厚な質感、ブランクーシの彫刻を想起させます'],
+      3:['適度な陰影が効いた立体表現','表面の割れ目に侘び寂びの精神が宿っています'],
+      4:['黄金比を思わせる流麗な螺旋','彫刻的完成度。ロダンも唸る曲線美です'],
+      5:['柔らかな曲線が優しい印象を残します','ソフトクリーム派の王道を征く正統な仕上がり'],
+      6:['前衛的。既成概念への果敢な挑戦を感じます','抽象表現主義、ポロックの飛沫を彷彿とさせます'],
+      7:['液体アートの極北、もはや書道の域','一期一会の儚さを体現した意欲作です']
+    };
+    const med={
+      1:'医学的には水分・食物繊維の不足サイン。海藻やきのこ類の摂取を推奨します',
+      2:'便秘傾向が見られます。水分と発酵食品を意識しましょう',
+      3:'腸内環境は概ね良好。理想形まであと一歩です',
+      4:'ブリストル4番、腸内フローラは極めて良好と推察されます',
+      5:'良好圏内。やや軟らかめゆえ、脂質の摂りすぎには留意を',
+      6:'消化が追いついていない模様。よく噛み、腸に休息を',
+      7:'脱水にご注意を。水分補給を最優先に、長引くようなら受診を'
+    };
+    const colorNote={
+      gold:'色調は理想の黄金褐色、胆汁の仕事ぶりが光ります',
+      brown:'教科書通りの健康的な褐色です',
+      dark:'深みのある焦茶。肉食に寄った週だったのでは',
+      green:'緑の気配は葉物野菜か通過速度の速さゆえでしょう',
+      black:'漆黒は要注意。鉄剤でなければ観察を続けてください',
+      red:'差し色の赤は要観察。トマトや辛味の心当たりがなければ受診を',
+      white:'白磁の色調は胆道の便り。続くなら専門医へ'
+    };
+    const finish=['余韻は長く、力強い','後味はすっきりと切れ味鋭い','香りの表現は控えさせていただきます','テロワール(昨日の食卓)が実によく出ています','ヴィンテージ感漂う逸品です','来週の熟成にも期待が持てます'];
+    const kire=e.kire==='神キレ'?'切れ味は完璧、紙いらずの美学。':e.kire==='粘り腰'?'粘性に強い個性が光ります。':'';
+    let txt='【芸術】'+pick(art[e.bristol]||art[4])+'。';
+    txt+='【医学】'+(med[e.bristol]||med[4]);
+    if(e.color&&colorNote[e.color])txt+='。'+colorNote[e.color];
+    txt+='。【総評】'+kire+pick(finish)+'。';
+    return txt;
+  }
+
+  /* ===== 3D鑑賞室 ===== */
+  let renderer3d=null,cam3d=null,anim3d=null,bumpTex=null;
+  // 滑らかなfBmノイズキャンバス(拡大補間で自然な起伏を作る)
+  function noiseCanvas(s,octaves,startRes){
+    const cv=document.createElement('canvas');cv.width=cv.height=s;
+    const cx=cv.getContext('2d');
+    cx.fillStyle='#808080';cx.fillRect(0,0,s,s);
+    let res=startRes||6,alpha=0.55;
+    for(let o=0;o<octaves;o++){
+      const t=document.createElement('canvas');t.width=t.height=res;
+      const tx=t.getContext('2d');
+      const id=tx.createImageData(res,res);
+      for(let i=0;i<id.data.length;i+=4){
+        const v=Math.random()*255;
+        id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255;
+      }
+      tx.putImageData(id,0,0);
+      cx.globalAlpha=alpha;cx.imageSmoothingEnabled=true;
+      cx.drawImage(t,0,0,s,s);
+      res=Math.min(s,res*2);alpha*=0.55;
+    }
+    cx.globalAlpha=1;
+    return cv;
+  }
+  function makeBumpTex(){
+    const s=512;
+    const cv=noiseCanvas(s,6,5);
+    const t=new THREE.Texture(cv);
+    t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2.5,2.5);t.needsUpdate=true;
+    return t;
+  }
+  function ensure3d(){
+    if(typeof THREE==='undefined')return false;
+    if(renderer3d)return true;
+    renderer3d=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+    renderer3d.setPixelRatio(Math.min(Math.min(window.screen.width,window.screen.height)<500?1.5:2,window.devicePixelRatio||1)); // スマホは軽量化
+    renderer3d.shadowMap.enabled=true;
+    renderer3d.shadowMap.type=THREE.PCFSoftShadowMap;
+    if('outputEncoding' in renderer3d)renderer3d.outputEncoding=THREE.sRGBEncoding;
+    renderer3d.toneMapping=THREE.ACESFilmicToneMapping;
+    renderer3d.toneMappingExposure=1.22;
+    if('physicallyCorrectLights' in renderer3d)renderer3d.physicallyCorrectLights=false;
+    $('p3dWrap').appendChild(renderer3d.domElement);
+    cam3d=new THREE.PerspectiveCamera(38,1,0.1,100);
+    cam3d.position.set(0,2.4,5.2);
+    cam3d.lookAt(0,0.8,0);
+    bumpTex=makeBumpTex();
+    return true;
+  }
+  let steamTex=null;
+  function makeSteamTex(){
+    const s=64,cv=document.createElement('canvas');cv.width=cv.height=s;
+    const cx=cv.getContext('2d');
+    const gr=cx.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+    gr.addColorStop(0,'rgba(255,255,255,0.5)');gr.addColorStop(1,'rgba(255,255,255,0)');
+    cx.fillStyle=gr;cx.fillRect(0,0,s,s);
+    const t=new THREE.Texture(cv);t.needsUpdate=true;return t;
+  }
+  function addSteam(scene,x,baseY,n){
+    if(!steamTex)steamTex=makeSteamTex();
+    const arr=[];
+    for(let i=0;i<n;i++){
+      const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:steamTex,transparent:true,opacity:0.0,depthWrite:false}));
+      const sc=0.4+Math.random()*0.4;sp.scale.set(sc,sc,sc);
+      sp.userData={x,baseY,ph:Math.random(),spd:0.15+Math.random()*0.25,off:(Math.random()-0.5)*0.5};
+      scene.add(sp);arr.push(sp);
+    }
+    return function(el){
+      arr.forEach(sp=>{
+        let p=(sp.userData.ph+el*0.0001*sp.userData.spd*10)%1;
+        sp.position.set(sp.userData.x+sp.userData.off*p,sp.userData.baseY+p*1.8,0);
+        sp.material.opacity=Math.sin(p*Math.PI)*0.35;
+      });
+    };
+  }
+  // まだら模様の写実テクスチャを色から生成
+  function shade(hex,f){
+    let [r,g,b]=hexToRgb(hex);
+    r=Math.max(0,Math.min(255,r*f));g=Math.max(0,Math.min(255,g*f));b=Math.max(0,Math.min(255,b*f));
+    return 'rgb('+(r|0)+','+(g|0)+','+(b|0)+')';
+  }
+  // 写実テクスチャ: fBmノイズで色ムラ+濡れ具合(ラフネスマップ)をピクセル単位で生成
+  function makePoopTex(hex){
+    const s=512;
+    const n1=noiseCanvas(s,6,5).getContext('2d').getImageData(0,0,s,s).data;  // 細かい質感
+    const n2=noiseCanvas(s,3,3).getContext('2d').getImageData(0,0,s,s).data;  // 大きなまだら
+    const [br,bg,bb]=hexToRgb(hex);
+    const cv=document.createElement('canvas');cv.width=cv.height=s;
+    const cx=cv.getContext('2d');
+    const img=cx.createImageData(s,s);
+    const rcv=document.createElement('canvas');rcv.width=rcv.height=s;
+    const rcx=rcv.getContext('2d');
+    const rimg=rcx.createImageData(s,s);
+    for(let i=0;i<img.data.length;i+=4){
+      const f1=n1[i]/255,f2=n2[i]/255;
+      // 色: 大まだらで暗部、細ノイズで質感、ハイ側はわずかに黄味
+      let f=0.55+f1*0.55;
+      f*=0.78+f2*0.42;
+      img.data[i]  =Math.min(255,br*f+(f1>0.72?14:0));
+      img.data[i+1]=Math.min(255,bg*f+(f1>0.72?8:0));
+      img.data[i+2]=Math.min(255,bb*f);
+      img.data[i+3]=255;
+      // ラフネス: ノイズが高い所=濡れて滑らか(反射)、低い所=マット
+      const r=200-f1*130-f2*40;
+      rimg.data[i]=rimg.data[i+1]=rimg.data[i+2]=Math.max(35,Math.min(230,r));
+      rimg.data[i+3]=255;
+    }
+    cx.putImageData(img,0,0);
+    rcx.putImageData(rimg,0,0);
+    // 流れ筋(押し出し方向の細い溝)
+    cx.globalAlpha=0.13;cx.strokeStyle=shade(hex,0.42);cx.lineWidth=1.4;
+    for(let k=0;k<26;k++){
+      cx.beginPath();const x=Math.random()*s;
+      cx.moveTo(x,0);cx.bezierCurveTo(x+24,s/3,x-24,s*2/3,x+(Math.random()-0.5)*36,s);
+      cx.stroke();
+    }
+    // 未消化のツブ(コーン・ごま等)
+    if(Math.random()<0.6){
+      for(let k=0;k<7;k++){
+        cx.globalAlpha=0.85;
+        cx.fillStyle=Math.random()>0.45?'#d8c24a':'#8a2f24';
+        const px=Math.random()*s,py=Math.random()*s,pr=2+Math.random()*3;
+        cx.beginPath();cx.ellipse(px,py,pr,pr*0.75,Math.random()*3,0,7);cx.fill();
+        cx.globalAlpha=0.4;cx.fillStyle='#fff8d0';
+        cx.beginPath();cx.arc(px-pr*0.3,py-pr*0.3,pr*0.3,0,7);cx.fill();
+      }
+    }
+    cx.globalAlpha=1;
+    const t=new THREE.Texture(cv);
+    t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,2);t.needsUpdate=true;
+    if('encoding' in t&&THREE.sRGBEncoding)t.encoding=THREE.sRGBEncoding;
+    const rt=new THREE.Texture(rcv);
+    rt.wrapS=rt.wrapT=THREE.RepeatWrapping;rt.repeat.set(2,2);rt.needsUpdate=true;
+    if(renderer3d){const an=renderer3d.capabilities.getMaxAnisotropy();t.anisotropy=an;rt.anisotropy=an;}
+    return {map:t,rough:rt};
+  }
+  function poopMat(col){
+    const tx=makePoopTex(col);
+    const M=THREE.MeshPhysicalMaterial?THREE.MeshPhysicalMaterial:THREE.MeshStandardMaterial;
+    const m=new M({
+      color:new THREE.Color(0xffffff),metalness:0.0,
+      roughness:0.85,roughnessMap:tx.rough,
+      map:tx.map,bumpMap:bumpTex,bumpScale:0.018
+    });
+    if('clearcoat' in m){m.clearcoat=0.9;m.clearcoatRoughness=0.24;} // てらてらの濡れツヤ
+    if('envMapIntensity' in m)m.envMapIntensity=1.0;
+    return m;
+  }
+  // 連続性のある多重周波数ノイズ(ザラつきではなく有機的なうねりを作る)
+  function jitter(geo,amt,rnd){
+    const seed=rnd()*10;
+    const p=geo.attributes.position,nAttr=geo.attributes.normal;
+    for(let i=0;i<p.count;i++){
+      const x=p.getX(i),y=p.getY(i),z=p.getZ(i);
+      const nx=nAttr.getX(i),ny=nAttr.getY(i),nz=nAttr.getZ(i);
+      // 低周波の大きなうねり + 中周波のこぶ + 高周波の微細な質感(すべて連続関数)
+      const d=Math.sin(x*3.1+y*2.3+seed)*Math.cos(z*2.7-seed)*amt*0.95
+             +Math.sin(x*7.9-z*6.3+seed*2)*Math.cos(y*8.7+seed)*amt*0.5
+             +Math.sin(y*5.2+seed*3)*amt*0.55
+             +Math.sin(x*19+y*16+z*17+seed*5)*amt*0.16;
+      p.setXYZ(i,x+nx*d,y+ny*d,z+nz*d);
+    }
+    p.needsUpdate=true;geo.computeVertexNormals();
+  }
+  function poopGroup(e){
+    const g=new THREE.Group();
+    const co=COLORS.find(c=>c.id===e.color);
+    const baseCol=e.photoColor||(co?co.c:'#8a5a2b');
+    const mat=poopMat(baseCol);
+    const sz={'おちょぼ':0.7,'ふつう':1,'ビッグ':1.3,'伝説級':1.65}[e.size]||1;
+    const b=e.bristol||4;
+    const rnd=(s=>()=>{s=(s*9301+49297)%233280;return s/233280;})((e.ts||1)%100000);
+    function add(mesh){mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);}
+    function sph(r,x,y,z,sy){
+      const geo=new THREE.SphereGeometry(r,48,36);jitter(geo,r*0.12,rnd);
+      const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(sy)m.scale.y=sy;add(m);
+    }
+    if(b===1){
+      for(let i=0;i<6;i++){const a=i/6*Math.PI*2+rnd();sph(0.2+rnd()*0.06,Math.cos(a)*(0.45+rnd()*0.2),0.2,Math.sin(a)*(0.45+rnd()*0.2),0.85);}
+    }else if(b===2){
+      const geo=new THREE.CylinderGeometry(0.3,0.3,1.5,36,16);jitter(geo,0.05,rnd);
+      const cyl=new THREE.Mesh(geo,mat);cyl.rotation.z=Math.PI/2;cyl.position.y=0.32;add(cyl);
+      for(let i=0;i<5;i++)sph(0.29,-0.65+i*0.33,0.33,(rnd()-0.5)*0.08,0.95);
+    }else if(b===6){
+      // 柔らかい山盛り(中央が高く裾が広い自然な堆積)
+      sph(0.5,0,0.2,0,0.6);
+      for(let i=0;i<8;i++){
+        const a=rnd()*Math.PI*2,rr=0.25+rnd()*0.45;
+        sph(0.22+rnd()*0.14,Math.cos(a)*rr,0.1+rnd()*0.08,Math.sin(a)*rr,0.55);
+      }
+    }else if(b===7){
+      const geo=new THREE.CylinderGeometry(1.0,1.14,0.12,64,4);jitter(geo,0.02,rnd);
+      const disc=new THREE.Mesh(geo,mat);disc.position.y=0.06;add(disc);
+      for(let i=0;i<5;i++)sph(0.12,(rnd()-0.5)*1.35,0.12,(rnd()-0.5)*1.35,0.5);
+    }else{
+      // 3〜5番: 螺旋チューブでとぐろを有機的に生成
+      const squish=b===5?0.72:b===3?0.9:0.82;
+      const turns=b===5?2.4:2.7;
+      const height=b===5?1.0:1.25;
+      const baseR=0.6;
+      const pts=[];const N=140;
+      for(let i=0;i<=N;i++){
+        const t=i/N;
+        const ang=t*Math.PI*2*turns;
+        const r=baseR*(1-t*0.78);
+        pts.push(new THREE.Vector3(Math.cos(ang)*r,0.16+t*height,Math.sin(ang)*r*squish));
+      }
+      const curve=new THREE.CatmullRomCurve3(pts);
+      const tubeR=b===5?0.24:0.2;
+      const geo=new THREE.TubeGeometry(curve,320,tubeR,28,false);
+      jitter(geo,tubeR*0.3,rnd);
+      const coil=new THREE.Mesh(geo,mat);add(coil);
+      // てっぺんの尖り
+      const tipGeo=new THREE.ConeGeometry(tubeR*0.9,tubeR*2.2,20);jitter(tipGeo,0.01,rnd);
+      const tip=new THREE.Mesh(tipGeo,mat);
+      const pe=curve.getPoint(1);tip.position.set(pe.x,pe.y+tubeR*0.9,pe.z);add(tip);
+      if(b===3){
+        const crackMat=new THREE.MeshStandardMaterial({color:0x1c1206,roughness:.95});
+        for(let i=0;i<3;i++){
+          const cr=new THREE.Mesh(new THREE.TorusGeometry(baseR*(1-i*0.25),0.02,8,32),crackMat);
+          cr.rotation.x=Math.PI/2;cr.scale.z=squish;cr.position.y=0.16+i*0.34;g.add(cr);
+        }
+      }
+    }
+    g.scale.set(sz,sz,sz);
+    return g;
+  }
+  /* ===== 背景50種(a: 動くギミック t=walk/fly/swim/fall/rise/twinkle) ===== */
+  const BGS=[
+    {n:'夜の大都会',s:['#0b1026','#2b3f6b'],g:'#171b2a',e:['🏙️','🌃','🏢','🚕','🌆'],a:{t:'walk',e:['🚕','🚗','🚌'],n:5,sp:2.6,sc:0.7}},
+    {n:'真昼の砂漠',s:['#8fd0f5','#e6cf8f'],g:'#d8b566',e:['🌵','🐫','🏜️','☀️'],a:{t:'walk',e:['🐫','🦂'],n:4,sp:0.7,sc:0.8}},
+    {n:'自分の部屋',s:['#d9c8a8','#b89b74'],g:'#8a6a45',e:['🛏️','🖥️','🪑','🚪','🧸'],a:{t:'rise',e:['💤'],n:4,sp:0.6,sc:0.6}},
+    {n:'公衆トイレ',s:['#dfe7ea','#a9b8bd'],g:'#8f9ea3',e:['🚽','🧻','🚻','🧼'],a:{t:'fly',e:['🪰'],n:5,sp:3,sc:0.35}},
+    {n:'風呂場',s:['#cdeef2','#8fc7cf'],g:'#7fb0b8',e:['🛁','🚿','🧴','🦆'],a:{t:'rise',e:['🫧','🫧','🦆'],n:8,sp:0.9,sc:0.5}},
+    {n:'宇宙空間',s:['#02030c','#0a0f2c'],g:'#05060f',e:['🪐','🌟','🚀','🛸','⭐'],a:{t:'twinkle',e:['⭐','🌟','✨','🛸'],n:10,sp:1,sc:0.5}},
+    {n:'深海',s:['#032a4a','#01111f'],g:'#01131f',e:['🐙','🐟','🦑','🐠','🫧'],a:{t:'swim',e:['🐟','🐠','🦑','🐙'],n:7,sp:0.9,sc:0.6}},
+    {n:'南国ビーチ',s:['#7ec8f0','#f2e2b0'],g:'#ecd79a',e:['🏖️','🌴','🏄','🐚','☀️'],a:{t:'walk',e:['🦀','🦀','🐢'],n:5,sp:1,sc:0.5}},
+    {n:'雪山山頂',s:['#bfe0f5','#eef6ff'],g:'#e8f1f8',e:['🏔️','⛄','🎿','❄️'],a:{t:'fall',e:['❄️'],n:12,sp:0.8,sc:0.4}},
+    {n:'桜並木',s:['#ffd7e6','#cfe8ff'],g:'#c9a97a',e:['🌸','🌸','🎏','🍡'],a:{t:'fall',e:['🌸'],n:12,sp:0.6,sc:0.4}},
+    {n:'火山の火口',s:['#3a0e06','#7a1c08'],g:'#2a0d05',e:['🌋','🔥','🪨','💨'],a:{t:'rise',e:['🔥','💨','✨'],n:8,sp:1.4,sc:0.6}},
+    {n:'高級寿司屋',s:['#e8dcc0','#c2a878'],g:'#7a5a34',e:['🍣','🍶','🥢','🏮'],a:{t:'walk',e:['🍣','🍣','🍤','🍣'],n:8,sp:1.2,sc:0.6}},
+    {n:'サバンナ',s:['#f2c877','#e0a94a'],g:'#c98f3c',e:['🦁','🦒','🐘','🌳'],a:{t:'walk',e:['🦁','🦒','🐘','🦓','🐆'],n:6,sp:0.9,sc:1.0}},
+    {n:'お花畑',s:['#bfe8ff','#d6f5c0'],g:'#8fbf5a',e:['🌷','🌻','🌼','🐝','🦋'],a:{t:'fly',e:['🦋','🐝','🦋'],n:8,sp:1.4,sc:0.4}},
+    {n:'コンビニ前',s:['#cfe9f7','#9fbccb'],g:'#8a99a2',e:['🏪','🚲','🥤','🍙'],a:{t:'walk',e:['🚲','🚶','🛵'],n:4,sp:1.6,sc:0.7}},
+    {n:'満員電車',s:['#c6cbd0','#9aa0a8'],g:'#7d838b',e:['🚃','💺','🧳','😷'],a:{t:'walk',e:['🚃','🚃','🚃'],n:5,sp:3.2,sc:0.8}},
+    {n:'教室',s:['#e6e0c8','#c3bc98'],g:'#9a7d54',e:['🏫','📚','✏️','🪑'],a:{t:'fall',e:['📄','✏️'],n:6,sp:0.7,sc:0.45}},
+    {n:'サッカー場',s:['#8fd0f5','#6fbf5a'],g:'#4e9e3e',e:['⚽','🥅','🏟️','🚩'],a:{t:'walk',e:['⚽','🏃','⚽'],n:5,sp:2.2,sc:0.55}},
+    {n:'ラスベガス',s:['#160a2a','#3a1a5a'],g:'#1a0f2a',e:['🎰','🎲','💵','🃏','✨'],a:{t:'fall',e:['💵','🪙','💵'],n:12,sp:1,sc:0.5}},
+    {n:'パリの街',s:['#cdd8e6','#e6d8c0'],g:'#b09a78',e:['🗼','🥐','☕','🎨'],a:{t:'fly',e:['🕊️','🕊️','🎈'],n:6,sp:1,sc:0.5}},
+    {n:'富士山',s:['#a9d8f5','#e8f2fb'],g:'#7fae7a',e:['🗻','🌸','⛩️','🍵'],a:{t:'fly',e:['🦅','🕊️'],n:4,sp:0.8,sc:0.55}},
+    {n:'田舎の田んぼ',s:['#bfe4f7','#cfe8a0'],g:'#8aa84e',e:['🌾','🐸','🏡','🚜'],a:{t:'walk',e:['🐸','🐸','🦆'],n:6,sp:1.3,sc:0.5}},
+    {n:'ジャングル',s:['#5a8f4a','#2e5a24'],g:'#244a1c',e:['🌴','🦜','🐒','🐍','🌿'],a:{t:'fly',e:['🦜','🦋','🐒'],n:7,sp:1.5,sc:0.55}},
+    {n:'北極',s:['#cfeaf7','#eff8ff'],g:'#e0eef7',e:['🐧','🧊','🐻‍❄️','❄️'],a:{t:'walk',e:['🐧','🐧','🐧','🐻‍❄️'],n:7,sp:0.9,sc:0.6}},
+    {n:'ピラミッド',s:['#f0d89a','#e0b45a'],g:'#cfa54c',e:['🔺','🐪','🏺','☀️'],a:{t:'walk',e:['🐪','🐪','🏺'],n:4,sp:0.6,sc:0.8}},
+    {n:'月面',s:['#05060f','#141826'],g:'#4a4a52',e:['🌕','🌍','🚀','👨‍🚀'],a:{t:'fly',e:['👨‍🚀','🛸','🚀'],n:4,sp:0.5,sc:0.7}},
+    {n:'天国の雲上',s:['#dff0ff','#ffffff'],g:'#eaf4ff',e:['☁️','😇','🕊️','✨','🎼'],a:{t:'fly',e:['😇','🕊️','☁️'],n:6,sp:0.6,sc:0.6}},
+    {n:'業火の地獄',s:['#2a0604','#7a1004'],g:'#1a0402',e:['🔥','😈','👹','🍖'],a:{t:'rise',e:['🔥','😈','🔥'],n:9,sp:1.5,sc:0.6}},
+    {n:'オフィス',s:['#dfe6ea','#b6c0c8'],g:'#8f9aa2',e:['🏢','💻','📎','☕','📊'],a:{t:'fall',e:['📄','📎','📄'],n:8,sp:0.9,sc:0.4}},
+    {n:'病院',s:['#eef4f5','#cdddde'],g:'#b8cccd',e:['🏥','💉','🩺','🧑‍⚕️'],a:{t:'walk',e:['🧑‍⚕️','👩‍⚕️','🚑'],n:4,sp:1,sc:0.7}},
+    {n:'神社',s:['#cfe0e6','#e6d0c0'],g:'#9a7a5a',e:['⛩️','🦊','🏮','🎌'],a:{t:'walk',e:['🦊','🦊','⛩️'],n:4,sp:0.8,sc:0.6}},
+    {n:'城の大広間',s:['#3a2a4a','#5a4a2a'],g:'#3a2e1a',e:['🏰','👑','🕯️','🛡️'],a:{t:'twinkle',e:['🕯️','✨','👑'],n:8,sp:0.7,sc:0.5}},
+    {n:'遊園地',s:['#bfe8ff','#ffd7e6'],g:'#9a8fb0',e:['🎡','🎢','🎠','🍿','🎪'],a:{t:'rise',e:['🎈','🎈','🎈'],n:7,sp:0.7,sc:0.55}},
+    {n:'ショッピングモール',s:['#e6e6ea','#c0c0c8'],g:'#9a9aa2',e:['🏬','🛍️','🛒','🧴'],a:{t:'walk',e:['🛒','🚶‍♀️','🛍️'],n:5,sp:1.2,sc:0.6}},
+    {n:'ガソリンスタンド',s:['#cfe0ea','#a0b0ba'],g:'#7a8a92',e:['⛽','🚗','🔧','🛢️'],a:{t:'walk',e:['🚗','🏍️','🚙'],n:4,sp:2.4,sc:0.7}},
+    {n:'牧場',s:['#bfe4f7','#a9d06a'],g:'#7fa84e',e:['🐄','🐑','🐔','🚜','🌾'],a:{t:'walk',e:['🐄','🐑','🐔','🐑'],n:7,sp:0.7,sc:0.75}},
+    {n:'花火大会',s:['#0a0a2a','#1a1a4a'],g:'#0a0a1a',e:['🎆','🎇','🏮','🍧','✨'],a:{t:'twinkle',e:['🎆','🎇','✨'],n:9,sp:2,sc:1.2}},
+    {n:'クリスマス',s:['#0e1a3a','#2a3a6a'],g:'#e8f1f8',e:['🎄','🎅','🎁','⛄','✨'],a:{t:'fall',e:['❄️','🎁','❄️'],n:11,sp:0.7,sc:0.45}},
+    {n:'ハロウィンの夜',s:['#1a0a2a','#3a1a4a'],g:'#2a1a3a',e:['🎃','👻','🦇','🕸️','🍬'],a:{t:'fly',e:['🦇','👻','🦇'],n:8,sp:1.8,sc:0.5}},
+    {n:'虹のふもと',s:['#cfe8ff','#e6f5d0'],g:'#8fbf7a',e:['🌈','☁️','🦄','✨'],a:{t:'walk',e:['🦄','🦄'],n:3,sp:1.1,sc:0.9}},
+    {n:'図書館',s:['#e6dcc4','#c0a878'],g:'#8a6a44',e:['📚','🪜','🕯️','🤫'],a:{t:'rise',e:['💤','📖'],n:5,sp:0.5,sc:0.5}},
+    {n:'ジム',s:['#d0d6dc','#a6b0b8'],g:'#7d858d',e:['🏋️','💪','🚴','🧴'],a:{t:'walk',e:['🏃','🚴','🏃‍♀️'],n:5,sp:2,sc:0.7}},
+    {n:'温泉旅館',s:['#e6dcc4','#c2a878'],g:'#8a6a44',e:['♨️','🍶','🎐','🌸'],a:{t:'rise',e:['♨️','💨','♨️'],n:7,sp:0.8,sc:0.6}},
+    {n:'サーカス',s:['#3a0a2a','#6a1a4a'],g:'#4a2a1a',e:['🎪','🤹','🐘','🎈','🎊'],a:{t:'walk',e:['🐘','🤹','🎪','🐎'],n:5,sp:1.2,sc:0.8}},
+    {n:'水族館トンネル',s:['#043a5a','#021f2f'],g:'#032a3a',e:['🐬','🦈','🐢','🐟','🫧'],a:{t:'swim',e:['🐬','🦈','🐢','🐟'],n:8,sp:1.1,sc:0.7}},
+    {n:'森のキャンプ',s:['#0a1a2a','#1a3a2a'],g:'#1a2a14',e:['⛺','🔥','🌲','🌙','🪵'],a:{t:'twinkle',e:['✨','✨','🔥'],n:9,sp:1.2,sc:0.35}},
+    {n:'台所',s:['#e6e0d0','#c0b498'],g:'#9a8a6a',e:['🍳','🔪','🥕','🍅','🧄'],a:{t:'rise',e:['💨','♨️'],n:6,sp:0.9,sc:0.5}},
+    {n:'ビルの屋上',s:['#f2b07a','#6a4a8a'],g:'#3a3a4a',e:['🏙️','🌇','🛰️','🚁'],a:{t:'fly',e:['🚁','🛰️','🕊️'],n:4,sp:1.2,sc:0.6}},
+    {n:'洞窟',s:['#12100a','#28221a'],g:'#1a160e',e:['🦇','💎','🪨','🔦','💧'],a:{t:'fly',e:['🦇','🦇','🦇'],n:7,sp:2.2,sc:0.45}},
+    {n:'ライブステージ',s:['#0a0a1a','#2a0a3a'],g:'#14101a',e:['🎤','🎸','🥁','🎹','✨'],a:{t:'rise',e:['🎵','🎶','✨'],n:9,sp:1.3,sc:0.5}}
+  ];
+  let scene3d=null,curBg=(typeof db.bg==='number'?db.bg:0),autoRot=true;
+  let hemiLight=null,pmremGen=null,envRT=null,groundMesh=null;
+  // 影を受け止める本物の地面(縁は透明で背景に溶け込む)
+  function makeGroundTex(col){
+    const s=512,cv=document.createElement('canvas');cv.width=cv.height=s;
+    const cx=cv.getContext('2d');
+    const [r,g,b]=hexToRgb(col);
+    const rgba=(f,a)=>'rgba('+Math.min(255,r*f|0)+','+Math.min(255,g*f|0)+','+Math.min(255,b*f|0)+','+a+')';
+    const gr=cx.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+    gr.addColorStop(0,rgba(1.1,1));gr.addColorStop(0.45,rgba(0.98,1));
+    gr.addColorStop(0.75,rgba(0.88,0.85));gr.addColorStop(1,rgba(0.8,0));
+    cx.fillStyle=gr;cx.fillRect(0,0,s,s);
+    // 土の質感スペックル
+    for(let i=0;i<420;i++){
+      const a=Math.random()*Math.PI*2,rr=Math.random()*s*0.48;
+      const x=s/2+Math.cos(a)*rr,y=s/2+Math.sin(a)*rr;
+      cx.globalAlpha=0.05+Math.random()*0.1;
+      cx.fillStyle=Math.random()>0.5?rgba(0.6,1):rgba(1.4,1);
+      cx.beginPath();cx.ellipse(x,y,1+Math.random()*5,0.8+Math.random()*2.4,Math.random()*3,0,7);cx.fill();
+    }
+    cx.globalAlpha=1;
+    const t=new THREE.Texture(cv);t.needsUpdate=true;
+    if('encoding' in t&&THREE.sRGBEncoding)t.encoding=THREE.sRGBEncoding;
+    return t;
+  }
+
+  /* ===== 背景ギミック(背景ごとに動く住人たち) ===== */
+  let gimmicks=[],gimmickTick=null;
+  function emojiSpriteTex(em){
+    const s=128,cv=document.createElement('canvas');cv.width=cv.height=s;
+    const cx=cv.getContext('2d');
+    cx.font='104px serif';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(em,s/2,s/2+6);
+    const t=new THREE.Texture(cv);t.needsUpdate=true;
+    return t;
+  }
+  function rebuildGimmicks(spec){
+    if(!scene3d)return;
+    gimmicks.forEach(o=>{scene3d.remove(o.sp);o.sp.material.map.dispose();o.sp.material.dispose();});
+    gimmicks=[];gimmickTick=null;
+    const a=spec.a;if(!a)return;
+    const type=a.t,n=a.n||5;
+    for(let i=0;i<n;i++){
+      const em=a.e[i%a.e.length];
+      const mat=new THREE.SpriteMaterial({map:emojiSpriteTex(em),transparent:true,depthWrite:false});
+      const sp=new THREE.Sprite(mat);
+      const sc=(a.sc||0.7)*(0.75+Math.random()*0.6);
+      sp.scale.set(sc,sc,1);
+      const u={
+        ph:Math.random(),
+        spd:(0.65+Math.random()*0.7),
+        dir:Math.random()<0.5?-1:1,
+        r:4.2+Math.random()*2.6,
+        gy:sc*0.45,
+        fy:1.6+Math.random()*2.2,
+        x0:(Math.random()-0.5)*11,
+        z0:(Math.random()<0.5?-1:1)*(2.5+Math.random()*4),
+        y0:0.8+Math.random()*3.4,
+        sc
+      };
+      sp.userData=u;scene3d.add(sp);gimmicks.push({sp,u});
+    }
+    const speed=(a.sp||1)*0.000045;
+    gimmickTick=el=>{
+      gimmicks.forEach(({sp,u})=>{
+        const p=(u.ph+el*speed*u.spd)%1;
+        if(type==='walk'){
+          const ang=p*Math.PI*2*u.dir;
+          sp.position.set(Math.cos(ang)*u.r,u.gy+Math.abs(Math.sin(p*Math.PI*44))*0.07,Math.sin(ang)*u.r);
+        }else if(type==='fly'){
+          const ang=p*Math.PI*2*u.dir;
+          sp.position.set(Math.cos(ang)*u.r,u.fy+Math.sin(p*Math.PI*10+u.ph*9)*0.5,Math.sin(ang)*u.r);
+        }else if(type==='swim'){
+          const ang=p*Math.PI*2*u.dir;
+          sp.position.set(Math.cos(ang)*u.r,0.7+u.fy*0.5+Math.sin(p*Math.PI*8)*0.3,Math.sin(ang)*u.r);
+        }else if(type==='fall'){
+          sp.position.set(u.x0+Math.sin(p*14)*0.5,5.4-p*5.8,u.z0);
+          sp.material.opacity=Math.min(1,(1-p)*5)*Math.min(1,p*8+0.2);
+        }else if(type==='rise'){
+          sp.position.set(u.x0+Math.sin(p*10)*0.35,-0.1+p*4.8,u.z0);
+          sp.material.opacity=Math.sin(p*Math.PI)*0.95;
+        }else if(type==='twinkle'){
+          sp.position.set(u.x0,u.y0,u.z0);
+          const tw=Math.abs(Math.sin(el*0.0012*u.spd*2.5+u.ph*8));
+          sp.material.opacity=0.15+0.85*tw;
+          const k=u.sc*(0.7+tw*0.5);sp.scale.set(k,k,1);
+        }
+      });
+    };
+  }
+  // 絵画的な背景: 空気遠近法・太陽/月・星・雲・遠景シルエット・ビネットで映画のワンカット風に
+  function drawBgTexture(spec){
+    const W=1024,H=640,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+    const cx=cv.getContext('2d');
+    let seed=spec.n.length*13+7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+    const [r0,g0,b0]=hexToRgb(spec.s[0]);
+    const dark=(r0*0.3+g0*0.6+b0*0.1)<95;
+    const hz=H*0.62;
+    // 空(3段グラデで深みを出す)
+    const gr=cx.createLinearGradient(0,0,0,hz+40);
+    gr.addColorStop(0,shade(spec.s[0],0.92));
+    gr.addColorStop(0.55,spec.s[0]);
+    gr.addColorStop(1,spec.s[1]);
+    cx.fillStyle=gr;cx.fillRect(0,0,W,hz+40);
+    // 太陽 or 月 + 星
+    const sx=W*(0.22+rnd()*0.56),sy=H*(0.10+rnd()*0.16);
+    if(dark){
+      for(let i=0;i<110;i++){
+        cx.globalAlpha=0.25+rnd()*0.7;cx.fillStyle='#ffffff';
+        const st=0.5+rnd()*1.7;
+        cx.fillRect(rnd()*W,rnd()*hz*0.92,st,st);
+      }
+      cx.globalAlpha=1;
+      const mg=cx.createRadialGradient(sx,sy,0,sx,sy,80);
+      mg.addColorStop(0,'rgba(255,250,225,0.9)');mg.addColorStop(0.3,'rgba(255,250,225,0.35)');mg.addColorStop(1,'rgba(255,250,225,0)');
+      cx.fillStyle=mg;cx.beginPath();cx.arc(sx,sy,80,0,7);cx.fill();
+      cx.fillStyle='#f4edd8';cx.beginPath();cx.arc(sx,sy,20,0,7);cx.fill();
+      cx.fillStyle=shade(spec.s[0],1.15);cx.beginPath();cx.arc(sx-7,sy-4,17,0,7);cx.fill(); // 三日月
+    }else{
+      const sg=cx.createRadialGradient(sx,sy,0,sx,sy,190);
+      sg.addColorStop(0,'rgba(255,255,238,0.95)');sg.addColorStop(0.18,'rgba(255,250,215,0.42)');sg.addColorStop(1,'rgba(255,250,215,0)');
+      cx.fillStyle=sg;cx.beginPath();cx.arc(sx,sy,190,0,7);cx.fill();
+      // ちぎれ雲
+      for(let i=0;i<6;i++){
+        const cy=H*0.06+rnd()*hz*0.52,cw=90+rnd()*170,ch=12+rnd()*18,cxp=rnd()*W;
+        cx.globalAlpha=0.10+rnd()*0.14;cx.fillStyle='#ffffff';
+        for(let k=0;k<5;k++){
+          cx.beginPath();
+          cx.ellipse(cxp+(k-2)*cw*0.19,cy+(rnd()-0.5)*7,cw*0.3,ch*(0.7+rnd()*0.5),0,0,7);
+          cx.fill();
+        }
+      }
+      cx.globalAlpha=1;
+    }
+    // 遠景シルエット(2層の丘・空気遠近で薄く)
+    [[shade(spec.g,dark?0.55:0.72),hz-34,46,0.55],[shade(spec.g,dark?0.36:0.5),hz-14,26,0.8]].forEach(([col,base,amp,al],li)=>{
+      cx.fillStyle=col;cx.globalAlpha=al;
+      cx.beginPath();cx.moveTo(0,hz+3);
+      for(let x=0;x<=W;x+=28){
+        cx.lineTo(x,base-Math.abs(Math.sin(x*0.007+li*2.7+seed*0.01))*amp-rnd()*9);
+      }
+      cx.lineTo(W,hz+3);cx.closePath();cx.fill();
+    });
+    cx.globalAlpha=1;
+    // 地面(奥は明るく手前は暗く=カメラ寄りの陰)
+    const gg=cx.createLinearGradient(0,hz,0,H);
+    gg.addColorStop(0,shade(spec.g,1.22));
+    gg.addColorStop(0.45,spec.g);
+    gg.addColorStop(1,shade(spec.g,0.55));
+    cx.fillStyle=gg;cx.fillRect(0,hz,W,H-hz);
+    // 地面の質感(遠近のついたストローク)
+    for(let i=0;i<170;i++){
+      const t=rnd();const y=hz+4+t*t*(H-hz-6);
+      const w=(5+rnd()*26)*(0.4+t*1.2);
+      cx.globalAlpha=0.05+rnd()*0.09;
+      cx.fillStyle=rnd()>0.5?shade(spec.g,0.5):shade(spec.g,1.4);
+      cx.beginPath();cx.ellipse(rnd()*W,y,w,1+t*2.8,0,0,7);cx.fill();
+    }
+    cx.globalAlpha=1;
+    // 地平線の大気のかすみ
+    const haze=cx.createLinearGradient(0,hz-28,0,hz+44);
+    haze.addColorStop(0,'rgba(255,255,255,0)');
+    haze.addColorStop(0.5,dark?'rgba(130,140,175,0.20)':'rgba(255,255,255,0.32)');
+    haze.addColorStop(1,'rgba(255,255,255,0)');
+    cx.fillStyle=haze;cx.fillRect(0,hz-28,W,72);
+    // 情景アクセント(絵文字は小さく地平線沿いに・遠景の点景として)
+    const emo=spec.e||['❓'];
+    cx.textAlign='center';cx.textBaseline='alphabetic';
+    for(let i=0;i<7;i++){
+      const em=emo[i%emo.length];
+      const x=(i+0.5)/7*W+(rnd()-0.5)*56;
+      const sz=26+rnd()*34;
+      cx.globalAlpha=0.85;
+      cx.font=sz+'px serif';cx.fillText(em,x,hz+5+rnd()*4);
+    }
+    cx.globalAlpha=1;
+    // ビネット(レンズの周辺減光)
+    const vg=cx.createRadialGradient(W/2,H*0.52,H*0.34,W/2,H*0.52,H*0.9);
+    vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.30)');
+    cx.fillStyle=vg;cx.fillRect(0,0,W,H);
+    const t=new THREE.Texture(cv);t.needsUpdate=true;
+    if('encoding' in t&&THREE.sRGBEncoding)t.encoding=THREE.sRGBEncoding;
+    return {tex:t,fog:spec.s[1]};
+  }
+  function applyBg(idx){
+    curBg=((idx%BGS.length)+BGS.length)%BGS.length;
+    const spec=BGS[curBg];
+    const b=drawBgTexture(spec);
+    if(scene3d){
+      scene3d.background=b.tex;
+      if(scene3d.fog)scene3d.fog.color.set(b.fog);
+      // 背景色に合わせた環境光(空の色が上から、地面の色が下から差し込む)
+      if(hemiLight){hemiLight.color.set(spec.s[0]);hemiLight.groundColor.set(spec.g);}
+      // 背景から環境マップを生成 → 濡れた表面に景色が映り込む
+      if(renderer3d&&THREE.PMREMGenerator){
+        try{
+          if(!pmremGen){pmremGen=new THREE.PMREMGenerator(renderer3d);pmremGen.compileEquirectangularShader();}
+          const envTex=new THREE.CanvasTexture(b.tex.image);
+          envTex.mapping=THREE.EquirectangularReflectionMapping;
+          const old=envRT;
+          envRT=pmremGen.fromEquirectangular(envTex);
+          scene3d.environment=envRT.texture;
+          envTex.dispose();
+          if(old)old.dispose();
+        }catch(err){}
+      }
+      // 地面の色も背景に合わせる
+      if(groundMesh){
+        if(groundMesh.material.map)groundMesh.material.map.dispose();
+        groundMesh.material.map=makeGroundTex(spec.g);
+        groundMesh.material.needsUpdate=true;
+      }
+      rebuildGimmicks(spec);
+    }
+    $('bgName').textContent='🖼️ '+spec.n;
+    db.bg=curBg;save();
+  }
+  function renderBgPicker(){
+    const box=$('bgPicker');box.innerHTML='';
+    BGS.forEach((b,i)=>{
+      const btn=document.createElement('button');btn.className='mini';
+      btn.style.margin='2px';btn.textContent=b.n;
+      if(i===curBg){btn.style.background='var(--navy)';btn.style.color='#f3e9c8';}
+      btn.onclick=()=>{applyBg(i);box.style.display='none';};
+      box.appendChild(btn);
+    });
+  }
+  /* カメラ操作(回転・ズーム) */
+  let camState={theta:0.35,phi:1.12,radius:5.2,tx:0,ty:1,tz:0};
+  function updateCam(){
+    const{theta,phi,radius,tx,ty,tz}=camState;
+    cam3d.position.set(tx+radius*Math.sin(phi)*Math.sin(theta),ty+radius*Math.cos(phi),tz+radius*Math.sin(phi)*Math.cos(theta));
+    cam3d.lookAt(tx,ty,tz);
+  }
+  function clampCam(){
+    camState.phi=Math.max(0.25,Math.min(1.6,camState.phi));
+    camState.radius=Math.max(2.4,Math.min(15,camState.radius));
+  }
+  let ctrlAttached=false;
+  function attachControls(dom){
+    if(ctrlAttached)return;ctrlAttached=true;
+    const pts=new Map();let lastX=0,lastY=0,lastDist=0;
+    dom.addEventListener('pointerdown',ev=>{
+      autoRot=false;pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+      lastX=ev.clientX;lastY=ev.clientY;dom.setPointerCapture(ev.pointerId);
+    });
+    dom.addEventListener('pointermove',ev=>{
+      if(!pts.has(ev.pointerId))return;
+      pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
+      if(pts.size>=2){
+        const a=[...pts.values()];
+        const dist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+        if(lastDist)camState.radius*=lastDist/dist;
+        lastDist=dist;clampCam();
+      }else{
+        camState.theta-=(ev.clientX-lastX)*0.008;
+        camState.phi-=(ev.clientY-lastY)*0.008;
+        lastX=ev.clientX;lastY=ev.clientY;clampCam();
+      }
+    });
+    const up=ev=>{pts.delete(ev.pointerId);if(pts.size<2)lastDist=0;};
+    dom.addEventListener('pointerup',up);dom.addEventListener('pointercancel',up);
+    dom.addEventListener('wheel',ev=>{ev.preventDefault();camState.radius*=(ev.deltaY>0?1.1:0.9);clampCam();},{passive:false});
+  }
+  function setup3dView(){
+    $('modal3d').classList.add('show');
+    const wrap=$('p3dWrap');
+    const w=wrap.clientWidth||320,h=wrap.clientHeight||300;
+    renderer3d.setSize(w,h);
+    attachControls(renderer3d.domElement);
+    cam3d.aspect=w/h;cam3d.updateProjectionMatrix();
+    const scene=new THREE.Scene();
+    scene.fog=new THREE.FogExp2(0x171310,0.018);
+    scene3d=scene;
+    // 背景連動の半球環境光(空と地面の色が回り込む)
+    hemiLight=new THREE.HemisphereLight(0xbfd4ff,0x8a6a45,0.55);
+    scene.add(hemiLight);
+    scene.add(new THREE.AmbientLight(0x6b5a44,0.28));
+    // 影が落ちる本物の地面
+    groundMesh=new THREE.Mesh(
+      new THREE.CircleGeometry(9,64),
+      new THREE.MeshStandardMaterial({transparent:true,roughness:0.95,metalness:0,depthWrite:false})
+    );
+    groundMesh.rotation.x=-Math.PI/2;
+    groundMesh.position.y=-0.14;
+    groundMesh.receiveShadow=true;
+    scene.add(groundMesh);
+    applyBg(curBg);
+    // キー: 上前からのスポットライト(高解像度ソフトシャドウ)
+    const key=new THREE.SpotLight(0xfff0d0,1.4,30,Math.PI/5,0.5,1.2);
+    key.position.set(2.5,7,4.5);key.castShadow=true;
+    const shadowRes=Math.min(window.screen.width,window.screen.height)<500?1024:2048; // スマホは軽量に
+    key.shadow.mapSize.width=shadowRes;key.shadow.mapSize.height=shadowRes;
+    key.shadow.bias=-0.0004;key.shadow.radius=4;
+    key.target.position.set(0,1,0);
+    scene.add(key);scene.add(key.target);
+    // 温かいフィル
+    const fill=new THREE.DirectionalLight(0xffd9a0,0.3);fill.position.set(-4,2,3);scene.add(fill);
+    // 青いリムライト(輪郭を立たせる)
+    const rim=new THREE.PointLight(0x9ec5ff,0.8,20);rim.position.set(-3,3,-4);scene.add(rim);
+    return scene;
+  }
+  function pedestal(scene,x,h,topR){
+    const marbleMat=new THREE.MeshStandardMaterial({color:0x243352,roughness:.5,metalness:.15});
+    const ped=new THREE.Mesh(new THREE.CylinderGeometry(topR,topR*1.12,h,48),marbleMat);
+    ped.position.set(x,h/2-0.14,0);ped.receiveShadow=true;ped.castShadow=true;scene.add(ped);
+    const top=new THREE.Mesh(new THREE.CylinderGeometry(topR*1.02,topR*1.02,0.05,48),
+      new THREE.MeshStandardMaterial({color:0x1a2740,roughness:.4,metalness:.2}));
+    top.position.set(x,h-0.14,0);top.receiveShadow=true;scene.add(top);
+    const rim=new THREE.Mesh(new THREE.TorusGeometry(topR,0.035,12,48),
+      new THREE.MeshStandardMaterial({color:0xd4b054,roughness:.25,metalness:.85}));
+    rim.rotation.x=Math.PI/2;rim.position.set(x,h-0.11,0);scene.add(rim);
+    return h-0.11;
+  }
+  function showPoop3D(e,owner){
+    if(Date.now()-closedAt<500)return; // 閉じた直後の幽霊クリックで開き直さない
+    if(!ensure3d()){toast('3D表示の読み込みに失敗(通信環境を確認してね)');return;}
+    $('p3dTabs').style.display='none';
+    autoRot=true;camState={theta:0.35,phi:1.1,radius:5.2,tx:0,ty:1.0,tz:0};
+    const scene=setup3dView();
+    const top=pedestal(scene,0,0.26,1.5);
+    const poop=poopGroup(e);poop.position.y=top;scene.add(poop);
+    const steam=addSteam(scene,0,top+0.3,6);
+    $('p3dOwner').textContent=owner+' の逸品 ('+String(e.date||'').replace(/-/g,'/')+' / '+yen(e.val||0)+')';
+    $('p3dSml').innerHTML=(e.photo?'<img class="photothumb sm" src="'+e.photo+'">':'')
+      +'🍷 <b>うんちソムリエ寸評</b><br>'+esc(e.sml||sommelier(e));
+    cancelAnimationFrame(anim3d);
+    const t0=performance.now();
+    (function loop(t){
+      if(!scene3d)return; // 閉じたら停止
+      const el=(t||t0)-t0;
+      if(autoRot)poop.rotation.y=el*0.0006;
+      steam(el);if(gimmickTick)gimmickTick(el);updateCam();
+      renderer3d.render(scene,cam3d);
+      anim3d=requestAnimationFrame(loop);
+    })(t0);
+  }
+  function showCeremony(rows){
+    if(Date.now()-closedAt<500)return; // 閉じた直後の幽霊クリックで開き直さない
+    if(!ensure3d()){toast('3D表示の読み込みに失敗(通信環境を確認してね)');return;}
+    rows=rows.slice(0,3);
+    autoRot=true;camState={theta:0,phi:1.05,radius:8.0,tx:0,ty:1.0,tz:0};
+    const scene=setup3dView();
+    const spots=[{x:0,h:1.05},{x:-2.0,h:0.68},{x:2.0,h:0.44}];
+    const poops=[];const steams=[];
+    rows.forEach((r,i)=>{
+      const s=spots[i];
+      const top=pedestal(scene,s.x,s.h,0.95);
+      const poop=poopGroup(r.best);
+      poop.scale.multiplyScalar(0.72);
+      poop.position.set(s.x,top,0);
+      scene.add(poop);poops.push(poop);
+      steams.push(addSteam(scene,s.x,top+0.25,4));
+    });
+    // 床
+    const floor=new THREE.Mesh(
+      new THREE.CylinderGeometry(4.2,4.2,0.08,48),
+      new THREE.MeshStandardMaterial({color:0x14100a,roughness:.85,metalness:.1})
+    );
+    floor.position.y=-0.2;floor.receiveShadow=true;scene.add(floor);
+    // 紙吹雪
+    const confetti=[];
+    const confColors=[0xd4b054,0xc0392b,0x5dade2,0xf3e9c8];
+    for(let i=0;i<45;i++){
+      const c=new THREE.Mesh(
+        new THREE.PlaneGeometry(0.09,0.09),
+        new THREE.MeshBasicMaterial({color:confColors[i%confColors.length],side:THREE.DoubleSide})
+      );
+      c.position.set((Math.random()-0.5)*7,Math.random()*6,(Math.random()-0.5)*3);
+      c.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3);
+      c.userData.v=0.008+Math.random()*0.014;
+      scene.add(c);confetti.push(c);
+    }
+    // タイトルとソムリエタブ
+    const medal=['🥇','🥈','🥉'];
+    $('p3dOwner').textContent='🏆 今週の品評会 表彰式 🏆';
+    const tabs=$('p3dTabs');tabs.style.display='flex';tabs.innerHTML='';
+    function showSml(i){
+      const r=rows[i];
+      $('p3dSml').innerHTML=(r.best.photo?'<img class="photothumb sm" src="'+r.best.photo+'">':'')
+        +'🍷 <b>ソムリエ解説 — '+medal[i]+' '+esc(r.name)+'('+yen(r.best.val)+')</b><br>'+esc(r.best.sml||sommelier(r.best));
+      [...tabs.children].forEach((b,j)=>{
+        b.style.background=j===i?'var(--navy)':'#fff';
+        b.style.color=j===i?'#f3e9c8':'var(--navy)';
+      });
+    }
+    rows.forEach((r,i)=>{
+      const b=document.createElement('button');b.className='mini';
+      b.textContent=medal[i]+' '+r.name;
+      b.onclick=()=>showSml(i);
+      tabs.appendChild(b);
+    });
+    showSml(0);
+    cancelAnimationFrame(anim3d);
+    const t0=performance.now();
+    (function loop(t){
+      if(!scene3d)return; // 閉じたら停止
+      const el=(t||t0)-t0;
+      if(autoRot)poops.forEach((p,i)=>{p.rotation.y=el*0.0006+i;});
+      steams.forEach(s=>s(el));if(gimmickTick)gimmickTick(el);updateCam();
+      confetti.forEach(c=>{
+        c.position.y-=c.userData.v*Math.min(el,2000)/16;
+        c.rotation.x+=0.02;c.rotation.z+=0.03;
+        if(c.position.y<-0.2)c.position.y=6;
+      });
+      renderer3d.render(scene,cam3d);
+      anim3d=requestAnimationFrame(loop);
+    })(t0);
+  }
+  // 閉じる: GPUリソースも解放する(スマホでメモリが溜まって操作不能になるのを防ぐ)
+  let closedAt=0; // 幽霊クリック(閉じた直後に裏のボタンが押される)対策
+  function close3d(){
+    closedAt=Date.now();
+    $('modal3d').classList.remove('show');
+    $('bgPicker').style.display='none';
+    cancelAnimationFrame(anim3d);
+    try{
+      if(scene3d){
+        scene3d.traverse(o=>{
+          if(o.geometry)o.geometry.dispose();
+          if(o.material){
+            (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{
+              ['map','bumpMap','roughnessMap'].forEach(k=>{
+                if(m[k]&&m[k]!==bumpTex)m[k].dispose();
+              });
+              m.dispose();
+            });
+          }
+        });
+        if(scene3d.background&&scene3d.background.dispose)scene3d.background.dispose();
+        scene3d.environment=null;
+      }
+      if(envRT){envRT.dispose();envRT=null;}
+      if(renderer3d&&renderer3d.renderLists)renderer3d.renderLists.dispose();
+    }catch(e){}
+    scene3d=null;groundMesh=null;hemiLight=null;
+    gimmicks=[];gimmickTick=null;steamTex=null;
+  }
+  $('p3dClose').onclick=close3d;
+  $('p3dX').onclick=close3d;
+  // 外側の暗い部分をタップしても閉じる(保険)
+  $('modal3d').addEventListener('click',ev=>{if(ev.target===$('modal3d'))close3d();});
+  // 最終防衛ライン: document直付け・キャプチャ段階で拾う(他の要素に食われても必ず届く)
+  ['pointerup','touchend'].forEach(evName=>{
+    document.addEventListener(evName,ev=>{
+      const t=ev.target;
+      if(t&&(t.id==='p3dClose'||t.id==='p3dX')){
+        if(ev.cancelable)ev.preventDefault(); // 幽霊クリックを発生させない
+        close3d();
+      }
+    },{capture:true,passive:false});
+  });
+  $('bgRandom').onclick=()=>{applyBg(Math.floor(Math.random()*BGS.length));$('bgPicker').style.display='none';};
+  $('bgPick').onclick=()=>{const p=$('bgPicker');if(p.style.display==='none'){renderBgPicker();p.style.display='block';}else p.style.display='none';};
+  $('zoomIn').onclick=()=>{camState.radius*=0.82;clampCam();};
+  $('zoomOut').onclick=()=>{camState.radius*=1.22;clampCam();};
+
+  /* ===== 記念撮影 ===== */
+  let lastSnap=null,baseSnap=null,capTimer=null;
+  // 縦書きにするか(和文のみなら縦・英数や顔文字が混ざれば横)
+  function isVertText(t){
+    return /^[぀-ゟ゠-ヿ㐀-䶿一-鿿々〆ゝゞーぁ-ん。、・「」!?…〜]+$/.test(t);
+  }
+  function drawCaption(){
+    const txt=$('snapText').value.trim().slice(0,17);
+    if(!baseSnap)return;
+    if(!txt){lastSnap=baseSnap;$('snapImg').src=baseSnap;return;}
+    const img=new Image();
+    img.onload=()=>{
+      const W=img.width,H=img.height;
+      const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+      const cx=cv.getContext('2d');
+      cx.drawImage(img,0,0);
+      const chars=[...txt];
+      const render=()=>{
+        cx.fillStyle='#ffffff';
+        cx.shadowColor='rgba(0,0,0,0.75)';cx.shadowBlur=Math.max(4,W*0.012);
+        cx.shadowOffsetX=1;cx.shadowOffsetY=2;
+        cx.textAlign='center';cx.textBaseline='middle';
+        let sealX,sealY,fs;
+        if(isVertText(txt)){
+          // 掛け軸ふうの縦書き(右端から・最大9文字で改行)
+          const perCol=Math.min(9,chars.length);
+          const cols=Math.ceil(chars.length/perCol);
+          fs=Math.min(H/(perCol+1.6)*0.92,W*0.105);
+          cx.font=fs+'px "Yuji Syuku",serif';
+          for(let c=0;c<cols;c++){
+            const colChars=chars.slice(c*perCol,(c+1)*perCol);
+            const x=W-fs*0.85-c*fs*1.18;
+            colChars.forEach((ch,i)=>{
+              let dch=ch,rot=0;
+              if(ch==='ー'||ch==='〜'||ch==='…'){rot=Math.PI/2;}
+              cx.save();cx.translate(x,fs*0.95+i*fs*1.06);
+              if(rot)cx.rotate(rot);
+              cx.fillText(dch,0,0);cx.restore();
+            });
+            if(c===cols-1){sealX=x;sealY=fs*0.95+colChars.length*fs*1.06+fs*0.35;}
+          }
+        }else{
+          // 横書き(下部・毛筆)
+          fs=Math.min(W/(chars.length+1.5)*1.05,H*0.12);
+          cx.font=fs+'px "Yuji Syuku",serif';
+          cx.textAlign='left';
+          const x=W*0.045,y=H-fs*0.85;
+          cx.fillText(txt,x,y);
+          sealX=x+cx.measureText(txt).width+fs*0.55;sealY=y;
+        }
+        // 落款(らっかん)印
+        const nm=[...myName()][0]||'鑑';
+        const ss=fs*0.72;
+        if(sealX!==undefined&&sealX>ss&&sealY<H-ss*0.4&&sealY>ss*0.4){
+          cx.shadowColor='rgba(0,0,0,0.4)';cx.shadowBlur=3;
+          cx.fillStyle='#b03024';
+          const r=ss*0.16;
+          cx.beginPath();
+          cx.moveTo(sealX-ss/2+r,sealY-ss/2);
+          cx.arcTo(sealX+ss/2,sealY-ss/2,sealX+ss/2,sealY+ss/2,r);
+          cx.arcTo(sealX+ss/2,sealY+ss/2,sealX-ss/2,sealY+ss/2,r);
+          cx.arcTo(sealX-ss/2,sealY+ss/2,sealX-ss/2,sealY-ss/2,r);
+          cx.arcTo(sealX-ss/2,sealY-ss/2,sealX+ss/2,sealY-ss/2,r);
+          cx.closePath();cx.fill();
+          cx.shadowColor='transparent';
+          cx.fillStyle='#fff6ec';cx.textAlign='center';
+          cx.font=(ss*0.62)+'px "Yuji Syuku",serif';
+          cx.fillText(nm,sealX,sealY+ss*0.04);
+        }
+        lastSnap=cv.toDataURL('image/jpeg',0.92);
+        $('snapImg').src=lastSnap;
+      };
+      if(document.fonts&&document.fonts.load){
+        document.fonts.load('20px "Yuji Syuku"',txt).then(render).catch(render);
+      }else render();
+    };
+    img.src=baseSnap;
+  }
+  $('snapText').oninput=()=>{clearTimeout(capTimer);capTimer=setTimeout(drawCaption,250);};
+  $('snapBtn').onclick=()=>{
+    if(!scene3d)return;
+    renderer3d.render(scene3d,cam3d);
+    try{baseSnap=renderer3d.domElement.toDataURL('image/jpeg',0.92);}
+    catch(err){toast('撮影に失敗しました');return;}
+    lastSnap=baseSnap;
+    $('snapImg').src=baseSnap;
+    $('snapModal').style.display='flex';
+    if($('snapText').value.trim())drawCaption();
+  };
+  $('snapClose').onclick=()=>$('snapModal').style.display='none';
+  $('snapSave').onclick=()=>{
+    if(!lastSnap)return;
+    const a=document.createElement('a');a.href=lastSnap;a.download='unchi_memorial_'+todayStr()+'.jpg';a.click();
+    toast('保存しました');
+  };
+  $('snapGallery').onclick=()=>{
+    if(!lastSnap)return;
+    db.gallery.unshift({img:lastSnap,ts:Date.now(),stamp:Math.floor(Math.random()*STAMPS.length)});
+    try{save();toast('🏛️ 記念館に飾りました!');}
+    catch(err){db.gallery.shift();toast('保存容量オーバー。古い写真を消してね');}
+    renderGallery();
+  };
+  if(navigator.share){
+    $('snapShare').style.display='block';
+    $('snapShare').onclick=async()=>{
+      if(!lastSnap)return;
+      try{
+        const blob=await(await fetch(lastSnap)).blob();
+        const file=new File([blob],'unchi.jpg',{type:'image/jpeg'});
+        if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],text:'#うんちバトラー'});
+        else await navigator.share({text:'#うんちバトラー'});
+      }catch(e){}
+    };
+  }
+
+  /* ===== 記念館ギャラリー ===== */
+  // 称賛スタンプ100種 [ことば, ふりがな]
+  const STAMPS=[
+    ['あっぱれ','アッパレ'],['熱盛','アツモリ'],['見事','ミゴト'],['圧巻','アッカン'],['快挙','カイキョ'],
+    ['神業','カミワザ'],['傑作','ケッサク'],['逸品','イッピン'],['絶品','ゼッピン'],['会心','カイシン'],
+    ['完璧','カンペキ'],['優勝','ユウショウ'],['感服','カンプク'],['脱帽','ダツボウ'],['仰天','ギョウテン'],
+    ['衝撃','ショウゲキ'],['震撼','シンカン'],['爆誕','バクタン'],['降臨','コウリン'],['覚醒','カクセイ'],
+    ['無双','ムソウ'],['最強','サイキョウ'],['伝説','レジェンド'],['神回','カミカイ'],['快腸','カイチョウ'],
+    ['絶好腸','ゼッコウチョウ'],['大物','オオモノ'],['豪快','ゴウカイ'],['痛快','ツウカイ'],['爽快','ソウカイ'],
+    ['壮観','ソウカン'],['風格','フウカク'],['貫禄','カンロク'],['王者','キング'],['横綱','ヨコヅナ'],
+    ['金賞','キンショウ'],['特上','トクジョウ'],['極上','ゴクジョウ'],['至高','シコウ'],['究極','キュウキョク'],
+    ['頂点','チョウテン'],['満点','マンテン'],['花丸','ハナマル'],['合格','ゴウカク'],['名人芸','メイジンゲイ'],
+    ['職人技','ショクニンワザ'],['匠の技','タクミノワザ'],['渾身','コンシン'],['入魂','ニュウコン'],['気迫','キハク'],
+    ['根性','コンジョウ'],['執念','シュウネン'],['奇跡','キセキ'],['果報','カホウ'],['吉兆','キッチョウ'],
+    ['大吉','ダイキチ'],['開運','カイウン'],['招福','ショウフク'],['繁盛','ハンジョウ'],['豊作','ホウサク'],
+    ['大漁','タイリョウ'],['黄金','オウゴン'],['財宝','ザイホウ'],['国宝','コクホウ'],['家宝','カホウ'],
+    ['秘宝','ヒホウ'],['殿堂入り','デンドウイリ'],['歴史的','レキシテキ'],['記録的','キロクテキ'],['前人未到','ゼンジンミトウ'],
+    ['空前絶後','クウゼンゼツゴ'],['唯一無二','ユイイツムニ'],['天下一品','テンカイッピン'],['日本一','ニッポンイチ'],['世界一','セカイイチ'],
+    ['宇宙一','ウチュウイチ'],['銀河級','ギンガキュウ'],['規格外','キカクガイ'],['別格','ベッカク'],['満場一致','マンジョウイッチ'],
+    ['拍手喝采','ハクシュカッサイ'],['大歓声','ダイカンセイ'],['大盛況','ダイセイキョウ'],['感無量','カンムリョウ'],['涙腺崩壊','ルイセンホウカイ'],
+    ['芸術的','アート'],['尊い','トウトイ'],['無敵','ムテキ'],['圧勝','アッショウ'],['完全勝利','パーフェクト'],
+    ['大団円','ダイダンエン'],['千両役者','センリョウヤクシャ'],['天才','テンサイ'],['鬼才','キサイ'],['怪物','モンスター'],
+    ['化け物','バケモノ'],['主役','シュヤク'],['満開','マンカイ'],['出世作','シュッセサク'],['神々しい','コウゴウシイ']
+  ];
+  const STAMP_COLORS=['#e8542f','#c0392b','#1e8449','#2471a3','#b7950b','#7d3c98'];
+  function stampHtml(it,i){
+    if(it.stamp===undefined)it.stamp=Math.floor((it.ts||i*7919)%STAMPS.length);
+    const st=STAMPS[it.stamp];
+    const seed=Math.abs(Math.floor((it.ts||i)/8));
+    const col=STAMP_COLORS[seed%STAMP_COLORS.length];
+    const rot=(seed%19)-11;
+    const len=[...st[0]].length;
+    const fs=len<=2?1.5:len<=3?1.25:1.0;
+    return '<span class="stampov" style="background:'+col
+      +';box-shadow:0 0 0 3px '+col+',0 3px 10px rgba(0,0,0,.4)'
+      +';transform:rotate('+rot+'deg);">'
+      +'<span class="sm" style="font-size:'+fs+'rem;">'+st[0]+'</span>'
+      +'<span class="sr">'+st[1]+'</span></span>';
+  }
+  function renderGallery(){
+    const g=$('galGrid');g.innerHTML='';
+    $('galEmpty').style.display=db.gallery.length?'none':'block';
+    let assigned=false;
+    db.gallery.forEach((it,i)=>{
+      const had=it.stamp!==undefined;
+      const d=document.createElement('div');d.className='zitem';d.style.padding='6px';
+      d.innerHTML='<span class="stampwrap"><img src="'+it.img+'" style="width:100%;border-radius:6px;display:block;">'
+        +stampHtml(it,i)+'</span>'
+        +'<div style="font-size:.66rem;color:var(--dim);margin-top:3px;">'+new Date(it.ts).toLocaleDateString('ja-JP')+'</div>';
+      if(!had)assigned=true;
+      const del=document.createElement('button');del.className='mini warn';del.textContent='🗑';del.style.marginTop='4px';
+      del.onclick=()=>{if(!confirm('この記念写真を削除しますか?'))return;db.gallery.splice(i,1);save();renderGallery();};
+      d.appendChild(del);g.appendChild(d);
+    });
+    if(assigned)save(); // 既存写真にもスタンプを割り当てて固定
+  }
+  $('saveBtn').onclick=()=>{
+    const date=$('fDate').value;
+    if(!date){toast('日付を選んでください');return;}
+    if(selBristol===null){toast('質感・形状を選んでください(査定の要です)');return;}
+    const e={
+      date,time:$('fTime').value,
+      color:selColor,bristol:selBristol,
+      size:chipVal('cSize')||'ふつう',amt:chipVal('cAmt')||'ふつう',
+      kire:chipVal('cKire'),memo:$('fMemo').value.trim(),
+      photo:selPhoto,photoColor:selPhotoColor,ts:Date.now()
+    };
+    e.val=appraise(e);
+    const rank=rankOf(e.val);
+    e.comment=pick(COMMENTS[rank]);
+    e.sml=sommelier(e);
+    // 銘品判定(このエントリ起因のもの)
+    const before=new Set(unlockedMeihin(db.entries).map(m=>m.id));
+    db.entries.push(e);
+    db.entries.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+    const after=unlockedMeihin(db.entries);
+    const newly=after.filter(m=>!before.has(m.id));
+    save();refreshMyCode();
+    showCert(e,rank,newly);
+    resetForm();renderRecent();
+  };
+
+  function unlockedMeihin(list){
+    return MEIHIN.filter(m=>{
+      if(m.global)return m.global(list);
+      return list.some(e=>m.test(e));
+    });
+  }
+
+  function showCert(e,rank,newly){
+    const co=COLORS.find(c=>c.id===e.color);
+    $('mRank').textContent='─ ランク '+rank+' ─';
+    $('mComment').textContent='「'+e.comment+'」';
+    $('mSml').innerHTML='🍷 <b>うんちソムリエ寸評</b><br>'+esc(e.sml||sommelier(e));
+    $('mView3d').onclick=()=>showPoop3D(e,myName());
+    const mm=$('mMeihin');
+    if(newly.length){
+      mm.style.display='block';
+      mm.innerHTML='🎉 銘品登録! '+newly.map(m=>m.icon+'『'+m.name+'』').join(' ');
+    }else mm.style.display='none';
+    const mh=$('mHealth');
+    const warns=[];
+    if(co&&co.warn)warns.push('※'+co.warn);
+    const br=BRISTOL.find(b=>b.n===e.bristol);
+    if(br&&(br.n<=2||br.n>=6))warns.push('※'+br.tip);
+    if(warns.length){mh.style.display='block';mh.innerHTML=warns.join('<br>');}
+    else mh.style.display='none';
+    $('modal').classList.add('show');
+    // 査定額カウントアップ演出
+    const target=e.val;const el=$('mValue');
+    const t0=performance.now();const durMs=1200;
+    function step(t){
+      const p=Math.min(1,(t-t0)/durMs);
+      const eased=1-Math.pow(1-p,3);
+      el.textContent=yen(target*eased);
+      if(p<1)requestAnimationFrame(step);
+      else el.textContent=yen(target);
+    }
+    requestAnimationFrame(step);
+  }
+  $('mClose').onclick=()=>$('modal').classList.remove('show');
+
+  /* ===== 最近の履歴 ===== */
+  function entryLine(e,withDel){
+    const div=document.createElement('div');div.className='entry';
+    if(withDel){
+      const del=document.createElement('button');del.className='del';del.textContent='削除';
+      del.onclick=()=>{
+        if(!confirm('この鑑定記録を削除しますか?'))return;
+        db.entries=db.entries.filter(x=>x!==e);
+        save();renderRecent();
+      };
+      div.appendChild(del);
+    }
+    const co=COLORS.find(c=>c.id===e.color);
+    const br=BRISTOL.find(b=>b.n===e.bristol);
+    let html='<b>'+esc(e.date.replace(/-/g,'/'))+'</b> '+(e.time?esc(e.time):'')
+      +' <span class="money" style="color:var(--red);font-weight:700;">'+yen(e.val||0)+'</span><br>';
+    if(e.photo)html+='<img class="photothumb sm" src="'+e.photo+'">';
+    if(co)html+='<span class="tag">🎨 '+co.n+'</span>';
+    if(br)html+='<span class="tag">🍌 '+br.n+'番 '+br.label+'</span>';
+    if(e.size)html+='<span class="tag">📏 '+esc(e.size)+'</span>';
+    if(e.amt)html+='<span class="tag">🥄 '+esc(e.amt)+'</span>';
+    if(e.kire)html+='<span class="tag">🧻 '+esc(e.kire)+'</span>';
+    if(e.memo)html+='<div style="margin-top:3px;">📝 '+esc(e.memo)+'</div>';
+    const meta=document.createElement('div');meta.innerHTML=html;
+    div.appendChild(meta);
+    const v3=document.createElement('button');v3.className='mini';v3.textContent='🧊 3Dで鑑賞';
+    v3.style.marginTop='4px';
+    v3.onclick=()=>showPoop3D(e,myName());
+    div.appendChild(v3);
+    return div;
+  }
+  function renderRecent(){
+    const box=$('recentList');box.innerHTML='';
+    const list=[...db.entries].sort((a,b)=>b.ts-a.ts).slice(0,7);
+    $('recentEmpty').style.display=list.length?'none':'block';
+    list.forEach(e=>box.appendChild(entryLine(e,true)));
+  }
+
+  /* ===== 図鑑 ===== */
+  function renderZukan(){
+    const got=new Set(unlockedMeihin(db.entries).map(m=>m.id));
+    $('zkanCount').textContent=got.size+' / '+MEIHIN.length;
+    const g=$('zukanGrid');g.innerHTML='';
+    MEIHIN.forEach(m=>{
+      const d=document.createElement('div');
+      const un=got.has(m.id);
+      d.className='zitem'+(un?'':' lock');
+      d.innerHTML='<div class="zi">'+(un?m.icon:'❓')+'</div>'
+        +'<div class="zn">'+(un?m.name:'？？？')+'</div>'
+        +'<div class="zc">'+m.cond+'</div>';
+      g.appendChild(d);
+    });
+  }
+
+  /* ===== 品評会 ===== */
+  function showManualCopy(text){
+    const o=$('myCodeOut');
+    o.style.display='block';o.value=text;
+    o.focus();o.select();o.setSelectionRange(0,text.length);
+    toast('自動コピーできない端末みたい。下の欄を長押し→全選択→コピーして');
+  }
+  function copyPromise(p,msg){
+    // iOS Safari対策: awaitの後だとクリップボードが拒否されるため、Promiseごと予約する
+    if(navigator.clipboard&&window.ClipboardItem){
+      try{
+        const item=new ClipboardItem({'text/plain':p.then(t=>new Blob([t],{type:'text/plain'}))});
+        navigator.clipboard.write([item]).then(()=>toast(msg)).catch(()=>p.then(showManualCopy));
+        return;
+      }catch(e){}
+    }
+    p.then(t=>{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(t).then(()=>toast(msg)).catch(()=>showManualCopy(t));
+      }else showManualCopy(t);
+    }).catch(()=>toast('コード生成に失敗しました'));
+  }
+  // コードは裏で先に作ってキャッシュ(押した瞬間コピーできるように)
+  let myCode=null;
+  function buildMyCodePromise(){
+    // 共有コードは軽く保つため生写真は除外(色は残るので3Dは写真の色で生成される)
+    const slim=db.entries.map(e=>{const c={};for(const k in e)if(k!=='photo')c[k]=e[k];return c;});
+    return encodeShare({name:myName(),entries:slim})
+      .then(code=>'🏵️'+myName()+'の出品コード🏵️\n'+code);
+  }
+  function refreshMyCode(){
+    myCode=null;
+    if(!db.entries.length)return;
+    buildMyCodePromise().then(t=>{myCode=t;}).catch(()=>{myCode=null;});
+  }
+  /* ===== 出品リンク(ネット公開版): タップだけで品評会に出品される ===== */
+  const isHosted=location.protocol==='http:'||location.protocol==='https:';
+  if(isHosted){
+    $('myLinkBtn').style.display='block';
+    $('myLinkBtn').onclick=()=>{
+      if(!db.entries.length){toast('まず1品鑑定に出してから');return;}
+      const p=buildMyCodePromise().then(t=>{
+        const code=(t.match(/UN[01]\.[A-Za-z0-9+/=]+/)||[])[0];
+        return '🏵️'+myName()+'の逸品が品評会に登場🏵️\nタップで観覧↓\n'
+          +location.origin+location.pathname+'#add='+encodeURIComponent(code);
+      });
+      copyPromise(p,'出品リンクをコピーした!LINEに貼って送れ!');
+    };
+  }
+  // リンクから開かれたら自動出品
+  async function importFromHash(){
+    const m=location.hash.match(/#add=(.+)/);
+    if(!m)return;
+    try{
+      const r=await importCodes(decodeURIComponent(m[1]));
+      if(r.ok){
+        $('tabHyo').click();
+        toast('🏛️ '+r.names.join('・')+'が品評会に参加!');
+      }
+    }catch(e){}
+    history.replaceState(null,'',location.pathname+location.search);
+  }
+
+  const COPY_MSG='出品コードをコピーした!LINEに貼って送れ!';
+  $('myCodeBtn').onclick=()=>{
+    if(!db.entries.length){toast('まず1品鑑定に出してから');return;}
+    if(myCode&&navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(myCode).then(()=>toast(COPY_MSG)).catch(()=>showManualCopy(myCode));
+      return;
+    }
+    copyPromise(buildMyCodePromise(),COPY_MSG);
+  };
+  if(navigator.share){
+    $('myShareBtn').style.display='block';
+    $('myShareBtn').onclick=()=>{
+      if(!db.entries.length){toast('まず1品鑑定に出してから');return;}
+      if(myCode)navigator.share({text:myCode}).catch(()=>{});
+      else{refreshMyCode();toast('コード準備中…1秒待ってもう一回押して');}
+    };
+  }
+  // テキスト中の出品コードを全部見つけて一括取り込み(複数人ぶん混ざっていてもOK)
+  async function importCodes(raw){
+    const found=String(raw).match(/UN[01]\.[A-Za-z0-9+/=]+/g)||[];
+    if(!found.length)return {ok:0,names:[]};
+    let ok=0;const names=[];
+    for(const code of found){
+      try{
+        const d=await decodeShare(code);
+        if(!Array.isArray(d.entries))continue;
+        const name=(d.name||'').trim()||'名無しの出品者';
+        const exist=db.friends.find(f=>f.name===name);
+        if(exist)exist.entries=d.entries;
+        else db.friends.push({name,entries:d.entries});
+        ok++;names.push(name);
+      }catch(err){}
+    }
+    if(ok){save();renderHyo();}
+    return {ok,names};
+  }
+  $('clipImportBtn').onclick=async()=>{
+    if(!(navigator.clipboard&&navigator.clipboard.readText)){
+      toast('この端末は自動読み取り非対応。下の手動貼り付けを使ってね');
+      return;
+    }
+    let text='';
+    try{text=await navigator.clipboard.readText();}
+    catch(err){toast('読み取りが許可されなかったみたい。下の手動貼り付けを使ってね');return;}
+    const r=await importCodes(text);
+    if(r.ok)toast('🏛️ '+r.names.join('・')+'が品評会に参加!');
+    else toast('コピーした中に出品コードが見つからないよ。LINEでコードを長押しコピーしてからもう一回!');
+  };
+  $('codeAddBtn').onclick=async()=>{
+    const raw=$('codeArea').value;
+    if(!raw.trim()){toast('コードを貼り付けてください');return;}
+    const r=await importCodes(raw);
+    if(r.ok){$('codeArea').value='';toast('🏛️ '+r.names.join('・')+'が品評会に参加!');}
+    else toast('コードを読み取れませんでした');
+  };
+
+  function bestOfWeek(list){
+    const w=list.filter(e=>inThisWeek(e.date)&&e.val);
+    if(!w.length)return null;
+    return w.reduce((a,b)=>b.val>a.val?b:a);
+  }
+  function renderHyo(){
+    const parts=[{name:myName()+'(自分)',entries:db.entries}]
+      .concat(db.friends.map(f=>({name:f.name,entries:f.entries})));
+    // 今週の品評会
+    const pod=$('weekPodium');
+    const rows=parts.map(p=>({name:p.name,best:bestOfWeek(p.entries)}))
+      .filter(r=>r.best).sort((a,b)=>b.best.val-a.best.val);
+    if(rows.length){
+      pod.style.display='block';
+      const box=$('podiumRows');box.innerHTML='';
+      const medal=['🥇','🥈','🥉'];
+      rows.slice(0,5).forEach((r,i)=>{
+        const br=BRISTOL.find(b=>b.n===r.best.bristol);
+        const div=document.createElement('div');div.className='prow';
+        div.innerHTML='<span class="pm">'+(medal[i]||'　')+'</span>'
+          +'<span><span class="pn">'+esc(r.name)+'</span><br>'
+          +'<span class="pd">'+esc(r.best.date.replace(/-/g,'/'))+' の一品('+(br?br.n+'番':'')+')</span></span>'
+          +'<span class="pv">'+yen(r.best.val)+'</span>';
+        const v3=document.createElement('button');v3.className='mini';v3.textContent='🧊 3D';
+        v3.style.marginLeft='6px';
+        v3.onclick=()=>showPoop3D(r.best,r.name);
+        div.appendChild(v3);
+        box.appendChild(div);
+      });
+      $('ceremonyBtn').onclick=()=>showCeremony(rows);
+      $('podiumCopyBtn').onclick=()=>{
+        let txt='🏵️ 今週のうんち品評会 結果発表 🏵️\n';
+        rows.slice(0,5).forEach((r,i)=>{
+          txt+=(medal[i]||(i+1)+'位')+' '+r.name+': '+yen(r.best.val)+'\n';
+        });
+        txt+='#うんちバトラー';
+        copyText(txt,'表彰式のテキストをコピー!');
+      };
+    }else pod.style.display='none';
+    // 出品者リスト
+    const list=$('frdList');list.innerHTML='';
+    $('frdEmpty').style.display=db.friends.length?'none':'block';
+    db.friends.forEach(f=>{
+      const total=f.entries.reduce((s,e)=>s+(e.val||0),0);
+      const got=unlockedMeihin(f.entries).length;
+      const card=document.createElement('div');card.className='fcard';
+      card.innerHTML='<div class="fname">'+esc(f.name)+'</div>'
+        +'<div class="fstats">総資産 <b class="money">'+yen(total)+'</b> / 鑑定数 '+f.entries.length+'回 / 銘品 '+got+'種</div>';
+      const del=document.createElement('button');del.className='mini warn';del.textContent='🗑 除名';
+      del.onclick=()=>{
+        if(!confirm(f.name+'を品評会から除名しますか?'))return;
+        db.friends=db.friends.filter(x=>x!==f);
+        save();renderHyo();
+      };
+      card.appendChild(del);
+      list.appendChild(card);
+    });
+    // 総資産ランキング
+    const arc=$('assetRankCard');
+    if(db.friends.length){
+      arc.style.display='block';
+      const all=parts.map(p=>({name:p.name,total:p.entries.reduce((s,e)=>s+(e.val||0),0)}))
+        .sort((a,b)=>b.total-a.total);
+      const box=$('assetRank');box.innerHTML='';
+      const medal=['🥇','🥈','🥉'];
+      all.forEach((p,i)=>{
+        const div=document.createElement('div');div.className='prow';
+        div.innerHTML='<span class="pm">'+(medal[i]||'　')+'</span>'
+          +'<span class="pn">'+esc(p.name)+'</span>'
+          +'<span class="pv">'+yen(p.total)+'</span>';
+        box.appendChild(div);
+      });
+    }else arc.style.display='none';
+  }
+
+  /* ===== 資産 ===== */
+  function renderStats(){
+    const list=db.entries;
+    const total=list.reduce((s,e)=>s+(e.val||0),0);
+    const week=list.filter(e=>inThisWeek(e.date)).reduce((s,e)=>s+(e.val||0),0);
+    $('sTotalVal').textContent=yen(total);
+    $('sWeekVal').textContent=yen(week);
+    $('sCount').textContent=list.length;
+    $('sStreak').textContent=curStreakOf(list);
+    // 最高の一品
+    const bb=$('bestBox');
+    if(list.length){
+      const best=list.reduce((a,b)=>(b.val||0)>(a.val||0)?b:a);
+      const meihins=unlockedMeihin([best]).filter(m=>!m.global);
+      bb.style.display='block';
+      $('bestName').textContent=meihins.length?meihins[0].icon+' '+meihins[0].name:'無銘の逸品';
+      $('bestVal').textContent=yen(best.val||0);
+      $('bestDate').textContent=best.date.replace(/-/g,'/')+' 鑑定';
+    }else bb.style.display='none';
+    // ブリストル分布
+    const chart=$('bristolChart');chart.innerHTML='';
+    const cnt={};list.forEach(e=>{cnt[e.bristol]=(cnt[e.bristol]||0)+1;});
+    const max=Math.max(1,...Object.values(cnt));
+    BRISTOL.forEach(br=>{
+      const n=cnt[br.n]||0;
+      const row=document.createElement('div');row.className='bbar';
+      row.innerHTML='<span class="bn">'+br.n+' '+br.label.split('(')[0]+'</span>'
+        +'<span class="bt"><i style="width:'+(n/max*100)+'%"></i></span>'
+        +'<span class="bc">'+n+'</span>';
+      chart.appendChild(row);
+    });
+    // 健康ヒント
+    const hint=$('healthHint');
+    const total37=list.filter(e=>e.bristol>=3&&e.bristol<=5).length;
+    if(!list.length)hint.textContent='';
+    else{
+      const ratio=Math.round(total37/list.length*100);
+      hint.textContent='理想ゾーン(3〜5番)率: '+ratio+'%。'+(ratio>=70?'絶好腸です。':ratio>=40?'まずまず。水分と食物繊維を意識すると化けます。':'伸びしろしかありません。野菜・水分・睡眠から。');
+    }
+  }
+
+  $('recapBtn').onclick=()=>{
+    const list=db.entries;
+    const total=list.reduce((s,e)=>s+(e.val||0),0);
+    const got=unlockedMeihin(list).length;
+    const best=list.length?list.reduce((a,b)=>(b.val||0)>(a.val||0)?b:a):null;
+    let txt='💰 '+myName()+'の鑑定資産\n'
+      +'総資産: '+yen(total)+'(鑑定数'+list.length+'回)\n'
+      +'銘品図鑑: '+got+'/'+MEIHIN.length+'種\n';
+    if(best)txt+='最高額の一品: '+yen(best.val||0)+'\n';
+    txt+='#うんちバトラー';
+    copyText(txt,'自慢用テキストをコピー!');
+  };
+
+  /* ===== 名前 ===== */
+  $('userName').value=db.name||'';
+  $('userName').oninput=e=>{db.name=e.target.value;save();refreshMyCode();};
+
+  /* ===== バックアップ ===== */
+  $('expBtn').onclick=()=>{
+    const blob=new Blob([JSON.stringify(db,null,1)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='kantei_'+myName()+'_'+todayStr()+'.json';
+    a.click();URL.revokeObjectURL(a.href);
+    toast('バックアップを書き出しました');
+  };
+  $('impBtn').onclick=()=>$('impFile').click();
+  $('impFile').onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const d=JSON.parse(r.result);
+        if(!Array.isArray(d.entries))throw 0;
+        if(!confirm('記録を読み込んだ内容で置き換えます。よろしいですか?'))return;
+        db.name=d.name||db.name;
+        db.entries=d.entries;
+        if(Array.isArray(d.friends))db.friends=d.friends;
+        save();
+        $('userName').value=db.name||'';
+        resetForm();renderRecent();renderStats();refreshMyCode();
+        toast('復元しました');
+      }catch(err){toast('ファイルを読み込めませんでした');}
+    };
+    r.readAsText(f);
+    e.target.value='';
+  };
+
+  /* ===== init ===== */
+  resetForm();renderRecent();refreshMyCode();importFromHash();
+})();
+</script>
+</body>
+</html>
