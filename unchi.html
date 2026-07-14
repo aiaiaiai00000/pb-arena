@@ -217,7 +217,6 @@
     border-radius:5px;padding:1px 7px;margin:1px 2px 1px 0;font-size:.73rem;
   }
   .money{font-family:"Oswald",sans-serif;font-variant-numeric:tabular-nums;}
-  .photothumb{border:1px solid var(--gold);border-radius:6px;max-width:120px;max-height:120px;vertical-align:middle;}
   /* 記念館スタンプ(熱盛スタイル) */
   .stampwrap{position:relative;display:block;}
   .stampov{
@@ -231,7 +230,6 @@
   }
   .stampov .sm{display:block;white-space:nowrap;letter-spacing:.01em;}
   .stampov .sr{display:block;font-size:.5rem;letter-spacing:.32em;opacity:.92;margin-top:1px;}
-  .photothumb.sm{max-width:56px;max-height:56px;border-radius:5px;margin-right:6px;}
   footer{text-align:center;font-size:.68rem;color:var(--dim);margin-top:24px;line-height:1.8;}
   #toast{
     position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
@@ -267,12 +265,7 @@
         <div style="flex:1;"><label class="fl">🕐 時刻</label><input type="time" id="fTime"></div>
       </div>
 
-      <label class="fl">📷 写真から鑑定(任意・撮ると色を自動判定します)</label>
-      <input type="file" id="fPhoto" accept="image/*" capture="environment" style="display:none;">
-      <button class="ghost" id="photoBtn" style="margin-bottom:6px;">📸 写真を撮る / 選ぶ</button>
-      <div id="photoPrev" style="text-align:center;"></div>
-
-      <label class="fl">🎨 色味<span style="font-weight:400;font-size:.72rem;color:var(--dim);"> (写真から自動選択されます)</span></label>
+      <label class="fl">🎨 色味</label>
       <div class="chips colorchips" id="cColor"></div>
 
       <label class="fl">🍌 質感・形状(ブリストルスケール)</label>
@@ -392,7 +385,7 @@
   </section>
 
   <footer>
-    ◆ うんちバトラー v14 ◆<br>
+    ◆ うんちバトラー v15 ◆<br>
     ◆ うんちバトラーは娯楽アプリです ◆<br>
     ただし黒色・赤色・白色の便が続く場合は、冗談抜きで消化器内科の受診をおすすめします。
   </footer>
@@ -498,6 +491,13 @@
   let db=load();
   if(!Array.isArray(db.friends))db.friends=[];
   if(!Array.isArray(db.gallery))db.gallery=[];
+  // 写真機能は廃止: 過去に保存された実物写真も端末から掃除する
+  (function purgePhotos(){
+    let purged=false;
+    (db.entries||[]).forEach(e=>{if(e&&e.photo){delete e.photo;purged=true;}});
+    db.friends.forEach(f=>(f.entries||[]).forEach(e=>{if(e&&e.photo){delete e.photo;purged=true;}}));
+    if(purged)try{localStorage.setItem(KEY,JSON.stringify(db));}catch(err){}
+  })();
   const $=id=>document.getElementById(id);
 
   function load(){
@@ -627,54 +627,12 @@
   function chipVal(elId){const on=$(elId).querySelector('.on');return on?on.textContent:'';}
   buildChips('cSize',SIZES);buildChips('cAmt',AMTS);buildChips('cKire',KIRES);
 
-  /* ===== 写真処理 ===== */
-  let selPhoto=null,selPhotoColor=null;
   function hexToRgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
-  function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>('0'+Math.round(x).toString(16)).slice(-2)).join('');}
-  function nearestColorId(r,g,b){
-    let best=COLORS[1],bd=1e9;
-    COLORS.forEach(c=>{
-      const [cr,cg,cb]=hexToRgb(c.c);
-      const d=(cr-r)**2+(cg-g)**2+(cb-b)**2;
-      if(d<bd){bd=d;best=c;}
-    });
-    return best.id;
-  }
-  $('photoBtn').onclick=()=>$('fPhoto').click();
-  $('fPhoto').onchange=ev=>{
-    const file=ev.target.files[0];if(!file)return;
-    const img=new Image();
-    img.onload=()=>{
-      // 縮小してdataURL化(共有コードを軽く保つため小さめ)
-      const max=140;let w=img.width,h=img.height;
-      const sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
-      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
-      const cx=cv.getContext('2d');cx.drawImage(img,0,0,w,h);
-      selPhoto=cv.toDataURL('image/jpeg',0.6);
-      // 中央領域の平均色を解析
-      const x0=Math.floor(w*0.3),y0=Math.floor(h*0.3),cw=Math.max(1,Math.floor(w*0.4)),ch=Math.max(1,Math.floor(h*0.4));
-      const data=cx.getImageData(x0,y0,cw,ch).data;
-      let R=0,G=0,B=0,n=0;
-      for(let i=0;i<data.length;i+=4){R+=data[i];G+=data[i+1];B+=data[i+2];n++;}
-      R/=n;G/=n;B/=n;
-      selPhotoColor=rgbToHex(R,G,B);
-      selColor=nearestColorId(R,G,B);
-      [...colorBox.children].forEach((x,i)=>x.classList.toggle('on',COLORS[i].id===selColor));
-      const co=COLORS.find(c=>c.id===selColor);
-      $('photoPrev').innerHTML='<img class="photothumb" src="'+selPhoto+'"><div style="font-size:.74rem;color:var(--dim);margin-top:4px;">色を自動判定: <b style="color:var(--navy)">'+(co?co.n:'')+'</b> <button class="mini" id="photoDel" style="padding:2px 8px;">取消</button></div>';
-      $('photoDel').onclick=()=>{selPhoto=null;selPhotoColor=null;$('photoPrev').innerHTML='';};
-      toast('📸 写真から色を判定しました!');
-    };
-    img.onerror=()=>toast('写真を読み込めませんでした');
-    img.src=URL.createObjectURL(file);
-    ev.target.value='';
-  };
 
   function resetForm(){
     $('fDate').value=todayStr();$('fTime').value=nowStr();
     $('fMemo').value='';
-    selColor=null;selBristol=null;selPhoto=null;selPhotoColor=null;
-    $('photoPrev').innerHTML='';
+    selColor=null;selBristol=null;
     [...colorBox.children].forEach(x=>x.classList.remove('on'));
     [...brBox.children].forEach(x=>x.classList.remove('on'));
     ['cSize','cAmt','cKire'].forEach(id=>[...$(id).children].forEach(c=>c.classList.remove('on')));
@@ -1343,8 +1301,7 @@
     const poop=poopGroup(e);poop.position.y=top;scene.add(poop);
     const steam=addSteam(scene,0,top+0.3,6);
     $('p3dOwner').textContent=owner+' の逸品 ('+String(e.date||'').replace(/-/g,'/')+' / '+yen(e.val||0)+')';
-    $('p3dSml').innerHTML=(e.photo?'<img class="photothumb sm" src="'+e.photo+'">':'')
-      +'🍷 <b>うんちソムリエ寸評</b><br>'+esc(e.sml||sommelier(e));
+    $('p3dSml').innerHTML='🍷 <b>うんちソムリエ寸評</b><br>'+esc(e.sml||sommelier(e));
     cancelAnimationFrame(anim3d);
     const t0=performance.now();
     (function loop(t){
@@ -1398,8 +1355,7 @@
     const tabs=$('p3dTabs');tabs.style.display='flex';tabs.innerHTML='';
     function showSml(i){
       const r=rows[i];
-      $('p3dSml').innerHTML=(r.best.photo?'<img class="photothumb sm" src="'+r.best.photo+'">':'')
-        +'🍷 <b>ソムリエ解説 — '+medal[i]+' '+esc(r.name)+'('+yen(r.best.val)+')</b><br>'+esc(r.best.sml||sommelier(r.best));
+      $('p3dSml').innerHTML='🍷 <b>ソムリエ解説 — '+medal[i]+' '+esc(r.name)+'('+yen(r.best.val)+')</b><br>'+esc(r.best.sml||sommelier(r.best));
       [...tabs.children].forEach((b,j)=>{
         b.style.background=j===i?'var(--navy)':'#fff';
         b.style.color=j===i?'#f3e9c8':'var(--navy)';
@@ -1656,7 +1612,7 @@
       color:selColor,bristol:selBristol,
       size:chipVal('cSize')||'ふつう',amt:chipVal('cAmt')||'ふつう',
       kire:chipVal('cKire'),memo:$('fMemo').value.trim(),
-      photo:selPhoto,photoColor:selPhotoColor,ts:Date.now()
+      ts:Date.now()
     };
     e.val=appraise(e);
     const rank=rankOf(e.val);
@@ -1729,7 +1685,6 @@
     const br=BRISTOL.find(b=>b.n===e.bristol);
     let html='<b>'+esc(e.date.replace(/-/g,'/'))+'</b> '+(e.time?esc(e.time):'')
       +' <span class="money" style="color:var(--red);font-weight:700;">'+yen(e.val||0)+'</span><br>';
-    if(e.photo)html+='<img class="photothumb sm" src="'+e.photo+'">';
     if(co)html+='<span class="tag">🎨 '+co.n+'</span>';
     if(br)html+='<span class="tag">🍌 '+br.n+'番 '+br.label+'</span>';
     if(e.size)html+='<span class="tag">📏 '+esc(e.size)+'</span>';
