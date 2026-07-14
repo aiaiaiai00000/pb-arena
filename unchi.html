@@ -311,6 +311,12 @@
 
   <!-- 品評会 -->
   <section id="secHyo">
+    <div class="card" id="syncCard" style="display:none;">
+      <b>🌐 みんなの品評会(自動同期)</b>
+      <p class="note" style="margin-bottom:6px;">開くだけで仲間の逸品が自動で並びます。コード交換は不要。名前を変えると仲間の画面にもその名前で出ます。</p>
+      <div id="syncStat" style="font-size:.75rem;color:var(--dim);">同期待機中…</div>
+      <button class="ghost" id="syncBtn" style="margin-top:8px;margin-bottom:0;">🔄 いますぐ更新</button>
+    </div>
     <div class="card">
       <b>📤 じぶんの出品コード</b>
       <p class="note">コピーしてLINEで送るだけ。友達はここに貼れば品評会に出品されます。</p>
@@ -386,7 +392,7 @@
   </section>
 
   <footer>
-    ◆ うんちバトラー v13 ◆<br>
+    ◆ うんちバトラー v14 ◆<br>
     ◆ うんちバトラーは娯楽アプリです ◆<br>
     ただし黒色・赤色・白色の便が続く場合は、冗談抜きで消化器内科の受診をおすすめします。
   </footer>
@@ -1662,7 +1668,7 @@
     db.entries.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
     const after=unlockedMeihin(db.entries);
     const newly=after.filter(m=>!before.has(m.id));
-    save();refreshMyCode();
+    save();refreshMyCode();scheduleSync();
     showCert(e,rank,newly);
     resetForm();renderRecent();
   };
@@ -1880,6 +1886,58 @@
     else toast('コードを読み取れませんでした');
   };
 
+  /* ===== 自動同期(みんなの品評会) ===== */
+  const SYNC_URL='https://api.npoint.io/ee86ef58f5f3c7ea3786';
+  if(!db.uid){db.uid='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);save();}
+  let syncBusy=false,syncTimer=null;
+  function slimEntries(list){
+    return list.slice(-60).map(e=>{const c={};for(const k in e)if(k!=='photo')c[k]=e[k];return c;});
+  }
+  async function syncNow(){
+    if(!isHosted||syncBusy)return;
+    syncBusy=true;
+    const st=$('syncStat');
+    try{
+      let room=null;
+      try{
+        const res=await fetch(SYNC_URL,{cache:'no-store'});
+        if(res.ok)room=await res.json();
+      }catch(e){}
+      if(!room||typeof room!=='object')room={};
+      if(!room.users||typeof room.users!=='object')room.users={};
+      // 仲間の出品を取り込み
+      for(const uid in room.users){
+        if(uid===db.uid)continue;
+        const u=room.users[uid];
+        if(!u||!Array.isArray(u.entries))continue;
+        const nm=(u.name||'').trim()||'名無しの鑑定士';
+        let f=db.friends.find(x=>x.uid===uid);
+        if(!f)f=db.friends.find(x=>!x.uid&&x.name===nm);
+        if(f){f.name=nm;f.uid=uid;f.entries=u.entries;}
+        else db.friends.push({name:nm,uid:uid,entries:u.entries});
+      }
+      save();
+      // 自分の記録をアップ(写真は除外・直近60件)
+      if(db.entries.length){
+        room.users[db.uid]={name:myName(),entries:slimEntries(db.entries),up:Date.now()};
+        await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(room)});
+      }
+      const others=Object.keys(room.users).filter(u=>u!==db.uid).length;
+      if(st)st.textContent='🌐 '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+' に同期済み(仲間 '+others+'人)';
+      renderHyo();
+    }catch(err){
+      if(st)st.textContent='⚠️ 同期できませんでした(通信環境を確認してね)';
+    }
+    syncBusy=false;
+  }
+  function scheduleSync(){clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,1200);}
+  if(isHosted){
+    $('syncCard').style.display='block';
+    $('syncBtn').onclick=syncNow;
+    $('tabHyo').addEventListener('click',()=>syncNow());
+    setInterval(()=>{if(!document.hidden)syncNow();},60000);
+  }
+
   function bestOfWeek(list){
     const w=list.filter(e=>inThisWeek(e.date)&&e.val);
     if(!w.length)return null;
@@ -2011,7 +2069,7 @@
 
   /* ===== 名前 ===== */
   $('userName').value=db.name||'';
-  $('userName').oninput=e=>{db.name=e.target.value;save();refreshMyCode();};
+  $('userName').oninput=e=>{db.name=e.target.value;save();refreshMyCode();scheduleSync();};
 
   /* ===== バックアップ ===== */
   $('expBtn').onclick=()=>{
@@ -2045,7 +2103,7 @@
   };
 
   /* ===== init ===== */
-  resetForm();renderRecent();refreshMyCode();importFromHash();
+  resetForm();renderRecent();refreshMyCode();importFromHash();syncNow();
 })();
 </script>
 </body>
